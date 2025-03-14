@@ -1,0 +1,6 @@
+[tools]
+rust = "latest"
+
+[tasks.build]
+run = ["cargo build -r --workspace", "cp target/release/qcsim ."]
+quiet = true
