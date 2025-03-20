@@ -27,7 +27,7 @@ pub enum Instruction {
 
 pub struct QCLang {
     pub input: String,
-    pub variables: HashMap<String, (Complex64, Complex64)>,
+    pub variables: Vec<(String, Qubit)>,
     pub instructions: Vec<(Instruction, Vec<String>)>,
 }
 
@@ -35,7 +35,7 @@ impl QCLang {
     pub fn new(input: String) -> Self {
         Self {
             input,
-            variables: HashMap::new(),
+            variables: vec![],
             instructions: vec![],
         }
     }
@@ -169,7 +169,8 @@ impl QCLang {
             }
         };
 
-        self.variables.insert(var_name, (qubit_zero, qubit_one));
+        self.variables
+            .push((var_name, Qubit::new(qubit_zero, qubit_one)));
     }
 
     fn get_slice(&self, range: Range) -> String {
@@ -231,10 +232,7 @@ impl QCLang {
     }
 
     pub fn run(&self) {
-        let mut qubits = vec![];
-        for (var_name, (zero, one)) in self.variables.clone() {
-            qubits.push((var_name, Qubit::new(zero, one)));
-        }
+        let qubits = self.variables.clone();
 
         let mut computer = Computer::new(qubits.iter().map(|q| q.1).collect());
         for (instr, args) in self.instructions.clone() {
@@ -270,122 +268,152 @@ impl QCLang {
                 }
                 Instruction::PauliX => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.pauli_x(index);
                 }
                 Instruction::PauliY => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.pauli_y(index);
                 }
                 Instruction::PauliZ => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.pauli_z(index);
                 }
                 Instruction::Hadamard => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.hadamard(index);
                 }
                 Instruction::Phase => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.phase(index);
                 }
                 Instruction::PiBy8 => {
                     let arg = args[0].clone();
-                    if !self.variables.contains_key(&arg) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg}");
-                        exit(1);
-                    }
-                    let index = qubits.iter().position(|q| q.0 == arg).unwrap();
+                    let index = match qubits.iter().position(|q| q.0 == arg) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg}");
+                            exit(1);
+                        }
+                    };
                     computer.pi_by_8(index);
                 }
                 Instruction::ControlledNot => {
                     let arg1 = args[0].clone();
                     let arg2 = args[1].clone();
-                    if !self.variables.contains_key(&arg1) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg1}");
-                        exit(1);
-                    }
-                    if !self.variables.contains_key(&arg2) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg2}");
-                        exit(1);
-                    }
-                    let index1 = qubits.iter().position(|q| q.0 == arg1).unwrap();
-                    let index2 = qubits.iter().position(|q| q.0 == arg2).unwrap();
+                    let index1 = match qubits.iter().position(|q| q.0 == arg1) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg1}");
+                            exit(1);
+                        }
+                    };
+                    let index2 = match qubits.iter().position(|q| q.0 == arg2) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg2}");
+                            exit(1);
+                        }
+                    };
                     computer.controlled_not(index1, index2);
                 }
                 Instruction::ControlledZ => {
                     let arg1 = args[0].clone();
                     let arg2 = args[1].clone();
-                    if !self.variables.contains_key(&arg1) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg1}");
-                        exit(1);
-                    }
-                    if !self.variables.contains_key(&arg2) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg2}");
-                        exit(1);
-                    }
-                    let index1 = qubits.iter().position(|q| q.0 == arg1).unwrap();
-                    let index2 = qubits.iter().position(|q| q.0 == arg2).unwrap();
+                    let index1 = match qubits.iter().position(|q| q.0 == arg1) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg1}");
+                            exit(1);
+                        }
+                    };
+                    let index2 = match qubits.iter().position(|q| q.0 == arg2) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg2}");
+                            exit(1);
+                        }
+                    };
                     computer.controlled_z(index1, index2);
                 }
                 Instruction::Swap => {
                     let arg1 = args[0].clone();
                     let arg2 = args[1].clone();
-                    if !self.variables.contains_key(&arg1) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg1}");
-                        exit(1);
-                    }
-                    if !self.variables.contains_key(&arg2) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg2}");
-                        exit(1);
-                    }
-                    let index1 = qubits.iter().position(|q| q.0 == arg1).unwrap();
-                    let index2 = qubits.iter().position(|q| q.0 == arg2).unwrap();
+                    let index1 = match qubits.iter().position(|q| q.0 == arg1) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg1}");
+                            exit(1);
+                        }
+                    };
+                    let index2 = match qubits.iter().position(|q| q.0 == arg2) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg2}");
+                            exit(1);
+                        }
+                    };
                     computer.swap(index1, index2);
                 }
                 Instruction::Toffoli => {
                     let arg1 = args[0].clone();
                     let arg2 = args[1].clone();
                     let arg3 = args[2].clone();
-                    if !self.variables.contains_key(&arg1) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg1}");
-                        exit(1);
-                    }
-                    if !self.variables.contains_key(&arg2) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg2}");
-                        exit(1);
-                    }
-                    if !self.variables.contains_key(&arg3) {
-                        eprintln!("[ERROR] Variable used but not declared: {arg3}");
-                        exit(1);
-                    }
-                    let index1 = qubits.iter().position(|q| q.0 == arg1).unwrap();
-                    let index2 = qubits.iter().position(|q| q.0 == arg2).unwrap();
-                    let index3 = qubits.iter().position(|q| q.0 == arg3).unwrap();
+                    let index1 = match qubits.iter().position(|q| q.0 == arg1) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg1}");
+                            exit(1);
+                        }
+                    };
+                    let index2 = match qubits.iter().position(|q| q.0 == arg2) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg2}");
+                            exit(1);
+                        }
+                    };
+                    let index3 = match qubits.iter().position(|q| q.0 == arg3) {
+                        Some(i) => i,
+                        None => {
+                            eprintln!("[ERROR] Variable used but not declared: {arg3}");
+                            exit(1);
+                        }
+                    };
                     computer.toffoli(index1, index2, index3);
                 }
             }
