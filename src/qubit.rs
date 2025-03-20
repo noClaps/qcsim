@@ -13,7 +13,7 @@ impl Qubit {
     pub fn new(zero: Complex64, one: Complex64) -> Self {
         let new_qubit = Self { zero, one };
         if !new_qubit.is_normalised() {
-            eprintln!("[ERROR] Qubit is not normalised!");
+            eprintln!("[ERROR] Qubit is not normalised: {:?}", new_qubit);
             exit(1);
         }
 
