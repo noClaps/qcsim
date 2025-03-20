@@ -1,6 +1,13 @@
 [tools]
+bun = "latest"
+node = "latest"
 rust = "latest"
+tree-sitter = "latest"
 
 [tasks.build]
 run = ["cargo build -r --workspace", "cp target/release/qcsim ."]
 quiet = true
+
+[tasks.ts-build]
+run = ["tree-sitter generate", "tree-sitter build", "tree-sitter parse ../main.qc"]
+dir = "{{ config_root }}/tree-sitter-qc"

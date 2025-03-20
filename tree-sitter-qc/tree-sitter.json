@@ -1,0 +1,40 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "qc",
+      "camelcase": "QC",
+      "title": "QC",
+      "scope": "source.qc",
+      "file-types": [
+        "qc"
+      ],
+      "injection-regex": "^qc$",
+      "class-name": "TreeSitterQc"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "0BSD",
+    "description": "The instructions language for QCSim",
+    "authors": [
+      {
+        "name": "noClaps",
+        "email": "contact@zerolimits.dev",
+        "url": "https://zerolimits.dev/"
+      }
+    ],
+    "links": {
+      "repository": "https://gitlab.com/noClaps/qcsim"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
