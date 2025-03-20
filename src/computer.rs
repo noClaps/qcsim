@@ -136,11 +136,11 @@ impl Computer {
 
         self.state[index1] = Qubit::new(
             output_amps[0] + output_amps[1] + output_amps[2] + output_amps[3],
-            output_amps[4] + output_amps[5] + output_amps[5] + output_amps[7],
+            output_amps[4] + output_amps[5] + output_amps[6] + output_amps[7],
         );
         self.state[index2] = Qubit::new(
             output_amps[0] + output_amps[1] + output_amps[4] + output_amps[5],
-            output_amps[2] + output_amps[3] + output_amps[5] + output_amps[7],
+            output_amps[2] + output_amps[3] + output_amps[6] + output_amps[7],
         );
         self.state[index3] = Qubit::new(
             output_amps[0] + output_amps[2] + output_amps[4] + output_amps[6],
