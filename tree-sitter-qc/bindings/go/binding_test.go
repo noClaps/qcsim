@@ -3,8 +3,8 @@ package tree_sitter_qc_test
 import (
 	"testing"
 
+	tree_sitter_qc "github.com/noclaps/qcsim/tree-sitter-qc/bindings/go"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
-	tree_sitter_qc "github.com/noclaps/qcsim/bindings/go"
 )
 
 func TestCanLoadGrammar(t *testing.T) {

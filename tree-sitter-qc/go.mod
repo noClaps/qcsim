@@ -1,4 +1,4 @@
-module github.com/noclaps/qcsim
+module github.com/noclaps/qcsim/tree-sitter-qc
 
 go 1.22
 
