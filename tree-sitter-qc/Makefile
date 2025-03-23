@@ -3,7 +3,7 @@ $(error Windows is not supported)
 endif
 
 LANGUAGE_NAME := tree-sitter-qc
-HOMEPAGE_URL := https://gitlab.com/noclaps/qcsim
+HOMEPAGE_URL := https://github.com/noclaps/qcsim
 VERSION := 0.1.0
 
 # repository

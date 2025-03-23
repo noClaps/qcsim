@@ -1,4 +1,4 @@
-module gitlab.com/noclaps/qcsim
+module github.com/noclaps/qcsim
 
 go 1.22
 

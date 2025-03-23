@@ -7,7 +7,7 @@ license = "0BSD"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "qc"]
 categories = ["parser-implementations", "parsing", "text-editors"]
-repository = "https://gitlab.com/noclaps/qcsim"
+repository = "https://github.com/noclaps/qcsim"
 edition = "2021"
 autoexamples = false
 

@@ -19,7 +19,7 @@ license.text = "0BSD"
 readme = "README.md"
 
 [project.urls]
-Homepage = "https://gitlab.com/noclaps/qcsim"
+Homepage = "https://github.com/noclaps/qcsim"
 
 [project.optional-dependencies]
 core = ["tree-sitter~=0.24"]

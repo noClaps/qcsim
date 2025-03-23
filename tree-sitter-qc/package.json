@@ -2,7 +2,7 @@
   "name": "tree-sitter-qc",
   "version": "0.1.0",
   "description": "The instructions language for QCSim",
-  "repository": "https://gitlab.com/noclaps/qcsim",
+  "repository": "https://github.com/noclaps/qcsim",
   "license": "0BSD",
   "author": {
     "name": "noClaps",

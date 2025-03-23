@@ -5,7 +5,7 @@ This is a quantum computer simulation research project. It's probably not accura
 ## Build instructions
 
 ```sh
-git clone https://gitlab.com/noClaps/qcsim.git && cd qcsim
+git clone https://github.com/noClaps/qcsim.git && cd qcsim
 mise install # https://mise.jdx.dev
 mise build
 ```
