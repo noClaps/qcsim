@@ -31,7 +31,3 @@ func (q *Qubit) isNormalised() bool {
 func (q *Qubit) ProbabilityZero() float64 {
 	return cmplx.Abs(q.Zero) * cmplx.Abs(q.Zero)
 }
-
-func (q *Qubit) Println() {
-	fmt.Printf("%v |0>, %v |1>\n", q.Zero, q.One)
-}
