@@ -46,7 +46,7 @@ func New(input string) QCLang {
 	return QCLang{input, []QCVariable{}, []QCFunction{}}
 }
 
-func (q *QCLang) Parse() {
+func (q *QCLang) Parse() error {
 	parser := tree_sitter.NewParser()
 	defer parser.Close()
 	parser.SetLanguage(tree_sitter.NewLanguage(tree_sitter_qc.Language()))
@@ -55,7 +55,7 @@ func (q *QCLang) Parse() {
 	defer tree.Close()
 
 	nodes := []tree_sitter.Node{*tree.RootNode()}
-	q.parseTree(nodes, 0)
+	return q.parseTree(nodes, 0)
 }
 
 func (q *QCLang) Run() error {

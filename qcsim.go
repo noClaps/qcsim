@@ -48,7 +48,9 @@ OPTIONS:
 	}
 
 	qc := qclang.New(string(file))
-	qc.Parse()
+	if err = qc.Parse(); err != nil {
+		log.Fatalln("[ERROR]", err)
+	}
 	if err = qc.Run(); err != nil {
 		log.Fatalln("[ERROR]", err)
 	}
