@@ -451,9 +451,10 @@ func (q *QCLang) addInstr(instr Instruction, children []tree_sitter.Node, gramma
 					}
 				case "uint":
 					if _, err := strconv.ParseUint(name, 10, 0); err != nil {
-						if !yield(name) {
-							return
-						}
+						return
+					}
+					if !yield(name) {
+						return
 					}
 				}
 			}
