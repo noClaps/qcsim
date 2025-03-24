@@ -46,10 +46,9 @@ func (c *Computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) err
 
 	outputAmps := [4]complex128{}
 	for i, amp := range inputAmps {
-		outputAmps[0] += matrix[0][i] * amp
-		outputAmps[1] += matrix[1][i] * amp
-		outputAmps[2] += matrix[2][i] * amp
-		outputAmps[3] += matrix[3][i] * amp
+		for o := range outputAmps {
+			outputAmps[0] += matrix[o][i] * amp
+		}
 	}
 
 	newQ1, err := qubit.New(outputAmps[0]+outputAmps[1], outputAmps[2]+outputAmps[3])
@@ -92,14 +91,9 @@ func (c *Computer) apply3(index1 uint, index2 uint, index3 uint, matrix [8][8]co
 
 	outputAmps := [8]complex128{}
 	for i, amp := range inputAmps {
-		outputAmps[0] += matrix[0][i] * amp
-		outputAmps[1] += matrix[1][i] * amp
-		outputAmps[2] += matrix[2][i] * amp
-		outputAmps[3] += matrix[3][i] * amp
-		outputAmps[4] += matrix[4][i] * amp
-		outputAmps[5] += matrix[5][i] * amp
-		outputAmps[6] += matrix[6][i] * amp
-		outputAmps[7] += matrix[7][i] * amp
+		for o := range outputAmps {
+			outputAmps[o] += matrix[o][i] * amp
+		}
 	}
 
 	newQ1, err := qubit.New(outputAmps[0]+outputAmps[1]+outputAmps[2]+outputAmps[3], outputAmps[4]+outputAmps[5]+outputAmps[6]+outputAmps[7])
