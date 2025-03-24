@@ -13,13 +13,13 @@ mise build
 ## Usage
 
 ```
-Usage: qcsim <INPUT>
+USAGE: qcsim <input>
 
-Arguments:
-  <INPUT>  QC instructions file to be run
+ARGUMENTS:
+  <input>     QC Instructions file to be run
 
-Options:
-  -h, --help  Print help
+OPTIONS:
+  -h, --help  Display this help message and exit
 ```
 
 You can run a QC instructions file with `qcsim path/to/file.qc`. The syntax for it is described in the [QC instructions syntax](#qc-instructions-syntax) section.
