@@ -3,6 +3,7 @@ package qclang
 import (
 	"encoding/json"
 	"log"
+	"strings"
 )
 
 func formatOutputs(outputs map[string]uint) string {
@@ -10,5 +11,6 @@ func formatOutputs(outputs map[string]uint) string {
 	if err != nil {
 		log.Fatalln("[ERROR]", err)
 	}
-	return string(b[2 : len(b)-2])
+	output := strings.ReplaceAll(string(b), ",", "")
+	return strings.Trim(output, "{\n}")
 }
