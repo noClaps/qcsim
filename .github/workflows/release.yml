@@ -1,0 +1,28 @@
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        versions:
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+    runs-on: ${{ matrix.versions.os }}
+    name: ${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: mise build -o qcsim-${{ github.ref_name }}-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: qcsim-${{ github.ref_name }}-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
