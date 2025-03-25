@@ -11,68 +11,68 @@ import (
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
-type Instruction uint
+type gate uint
 
 const (
-	Measure       Instruction = iota // measure(uint?)
-	PauliX                           // x(qubit)
-	PauliY                           // y(qubit)
-	PauliZ                           // z(qubit)
-	Hadamard                         // hadamard(qubit)
-	Phase                            // phase(qubit)
-	PiBy8                            // pi_8(qubit)
-	ControlledNot                    // cnot(qubit, qubit)
-	ControlledZ                      // cz(qubit, qubit)
-	Swap                             // swap(qubit, qubit)
-	Toffoli                          // toffoli(qubit, qubit, qubit)
+	measure       gate = iota // measure(uint?)
+	pauliX                    // x(qubit)
+	pauliY                    // y(qubit)
+	pauliZ                    // z(qubit)
+	hadamard                  // hadamard(qubit)
+	phase                     // phase(qubit)
+	piBy8                     // pi_8(qubit)
+	controlledNot             // cnot(qubit, qubit)
+	controlledZ               // cz(qubit, qubit)
+	swap                      // swap(qubit, qubit)
+	toffoli                   // toffoli(qubit, qubit, qubit)
 )
 
-type QCVariable struct {
-	Name  string
-	Qubit qubit.Qubit
+type qcVariable struct {
+	name  string
+	qubit qubit.Qubit
 }
-type QCFunction struct {
-	Instruction Instruction
-	Arguments   []string
-}
-
-type QCLang struct {
-	Input        string
-	Variables    []QCVariable
-	Instructions []QCFunction
+type qcFunction struct {
+	instruction gate
+	arguments   []string
 }
 
-func New(input string) QCLang {
-	return QCLang{input, []QCVariable{}, []QCFunction{}}
+type qcLang struct {
+	input        string
+	variables    []qcVariable
+	instructions []qcFunction
 }
 
-func (q *QCLang) Parse() error {
+func New(input string) qcLang {
+	return qcLang{input, []qcVariable{}, []qcFunction{}}
+}
+
+func (q *qcLang) Parse() error {
 	parser := tree_sitter.NewParser()
 	defer parser.Close()
 	parser.SetLanguage(tree_sitter.NewLanguage(tree_sitter_qc.Language()))
 
-	tree := parser.Parse([]byte(q.Input), nil)
+	tree := parser.Parse([]byte(q.input), nil)
 	defer tree.Close()
 
 	nodes := []tree_sitter.Node{*tree.RootNode()}
 	return q.parseTree(nodes, 0)
 }
 
-func (q *QCLang) Run() error {
-	variables := q.Variables
+func (q *qcLang) Run() error {
+	variables := q.variables
 
 	qubits := []qubit.Qubit{}
 	for _, variable := range variables {
-		qubits = append(qubits, variable.Qubit)
+		qubits = append(qubits, variable.qubit)
 	}
 	computer := computer.New(qubits)
 
-	for _, instruction := range q.Instructions {
-		instr := instruction.Instruction
-		args := instruction.Arguments
+	for _, instruction := range q.instructions {
+		instr := instruction.instruction
+		args := instruction.arguments
 
 		switch instr {
-		case Measure:
+		case measure:
 			var count uint = 1
 			if len(args) == 1 {
 				if countArg, err := strconv.ParseUint(args[0], 10, 0); err != nil {
@@ -96,10 +96,10 @@ func (q *QCLang) Run() error {
 				}
 			}
 			fmt.Println(formatOutputs(outputs))
-		case PauliX:
+		case pauliX:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -107,10 +107,10 @@ func (q *QCLang) Run() error {
 			if err := computer.PauliX(uint(index)); err != nil {
 				return err
 			}
-		case PauliY:
+		case pauliY:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -118,10 +118,10 @@ func (q *QCLang) Run() error {
 			if err := computer.PauliY(uint(index)); err != nil {
 				return err
 			}
-		case PauliZ:
+		case pauliZ:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -129,10 +129,10 @@ func (q *QCLang) Run() error {
 			if err := computer.PauliZ(uint(index)); err != nil {
 				return err
 			}
-		case Hadamard:
+		case hadamard:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -140,10 +140,10 @@ func (q *QCLang) Run() error {
 			if err := computer.Hadamard(uint(index)); err != nil {
 				return err
 			}
-		case Phase:
+		case phase:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -151,10 +151,10 @@ func (q *QCLang) Run() error {
 			if err := computer.Phase(uint(index)); err != nil {
 				return err
 			}
-		case PiBy8:
+		case piBy8:
 			arg := args[0]
-			index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-				return variable.Name == arg
+			index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+				return variable.name == arg
 			})
 			if index == -1 {
 				return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -162,12 +162,12 @@ func (q *QCLang) Run() error {
 			if err := computer.PiBy8(uint(index)); err != nil {
 				return err
 			}
-		case ControlledNot:
+		case controlledNot:
 			indexes := []uint{}
 			for i := range 2 {
 				arg := args[i]
-				index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-					return variable.Name == arg
+				index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+					return variable.name == arg
 				})
 				if index == -1 {
 					return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -178,12 +178,12 @@ func (q *QCLang) Run() error {
 			if err := computer.ControlledNot(indexes[0], indexes[1]); err != nil {
 				return err
 			}
-		case ControlledZ:
+		case controlledZ:
 			indexes := []uint{}
 			for i := range 2 {
 				arg := args[i]
-				index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-					return variable.Name == arg
+				index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+					return variable.name == arg
 				})
 				if index == -1 {
 					return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -194,12 +194,12 @@ func (q *QCLang) Run() error {
 			if err := computer.ControlledZ(indexes[0], indexes[1]); err != nil {
 				return err
 			}
-		case Swap:
+		case swap:
 			indexes := []uint{}
 			for i := range 2 {
 				arg := args[i]
-				index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-					return variable.Name == arg
+				index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+					return variable.name == arg
 				})
 				if index == -1 {
 					return fmt.Errorf("Variable used but not declared: %s", arg)
@@ -210,12 +210,12 @@ func (q *QCLang) Run() error {
 			if err := computer.Swap(indexes[0], indexes[1]); err != nil {
 				return err
 			}
-		case Toffoli:
+		case toffoli:
 			indexes := []uint{}
 			for i := range 3 {
 				arg := args[i]
-				index := slices.IndexFunc(variables, func(variable QCVariable) bool {
-					return variable.Name == arg
+				index := slices.IndexFunc(variables, func(variable qcVariable) bool {
+					return variable.name == arg
 				})
 				if index == -1 {
 					return fmt.Errorf("Variable used but not declared: %s", arg)

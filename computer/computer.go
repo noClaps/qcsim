@@ -9,22 +9,22 @@ import (
 	"github.com/noclaps/qcsim/qubit"
 )
 
-type Computer struct {
+type computer struct {
 	state []qubit.Qubit
 }
 
-const I = complex(0, 1)
+const i = complex(0, 1)
 
 // Creates a new quantum computer.
-func New(qubits []qubit.Qubit) Computer {
-	return Computer{state: qubits}
+func New(qubits []qubit.Qubit) computer {
+	return computer{state: qubits}
 }
 
 // Returns the measured states as a string. The returned string will have the
 // measured value of the first qubit as the first character, the second qubit
 // as the second character, and so on for as many qubits as were input into the
 // computer.
-func (c *Computer) Measure() string {
+func (c *computer) Measure() string {
 	output := ""
 	for _, q := range c.state {
 		randomVal := rand.Float64()
@@ -38,7 +38,7 @@ func (c *Computer) Measure() string {
 	return output
 }
 
-func (c *Computer) PauliX(index uint) error {
+func (c *computer) PauliX(index uint) error {
 	matrix := [2][2]complex128{
 		{0, 1},
 		{1, 0},
@@ -46,15 +46,15 @@ func (c *Computer) PauliX(index uint) error {
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) PauliY(index uint) error {
+func (c *computer) PauliY(index uint) error {
 	matrix := [2][2]complex128{
-		{0, -I},
-		{I, 0},
+		{0, -i},
+		{i, 0},
 	}
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) PauliZ(index uint) error {
+func (c *computer) PauliZ(index uint) error {
 	matrix := [2][2]complex128{
 		{1, 0},
 		{0, -1},
@@ -62,7 +62,7 @@ func (c *Computer) PauliZ(index uint) error {
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) Hadamard(index uint) error {
+func (c *computer) Hadamard(index uint) error {
 	matrix := [2][2]complex128{
 		{1 / math.Sqrt2, 1 / math.Sqrt2},
 		{1 / math.Sqrt2, -1 / math.Sqrt2},
@@ -70,15 +70,15 @@ func (c *Computer) Hadamard(index uint) error {
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) Phase(index uint) error {
+func (c *computer) Phase(index uint) error {
 	matrix := [2][2]complex128{
 		{1, 0},
-		{0, I},
+		{0, i},
 	}
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) PiBy8(index uint) error {
+func (c *computer) PiBy8(index uint) error {
 	matrix := [2][2]complex128{
 		{1, 0},
 		{0, cmplx.Rect(1, math.Exp(math.Pi/4))},
@@ -86,7 +86,7 @@ func (c *Computer) PiBy8(index uint) error {
 	return c.apply1(index, matrix)
 }
 
-func (c *Computer) ControlledNot(index1 uint, index2 uint) error {
+func (c *computer) ControlledNot(index1 uint, index2 uint) error {
 	matrix := [4][4]complex128{
 		{1, 0, 0, 0},
 		{0, 1, 0, 0},
@@ -96,7 +96,7 @@ func (c *Computer) ControlledNot(index1 uint, index2 uint) error {
 	return c.apply2(index1, index2, matrix)
 }
 
-func (c *Computer) ControlledZ(index1 uint, index2 uint) error {
+func (c *computer) ControlledZ(index1 uint, index2 uint) error {
 	matrix := [4][4]complex128{
 		{1, 0, 0, 0},
 		{0, 1, 0, 0},
@@ -106,7 +106,7 @@ func (c *Computer) ControlledZ(index1 uint, index2 uint) error {
 	return c.apply2(index1, index2, matrix)
 }
 
-func (c *Computer) Swap(index1 uint, index2 uint) error {
+func (c *computer) Swap(index1 uint, index2 uint) error {
 	matrix := [4][4]complex128{
 		{1, 0, 0, 0},
 		{0, 0, 1, 0},
@@ -116,7 +116,7 @@ func (c *Computer) Swap(index1 uint, index2 uint) error {
 	return c.apply2(index1, index2, matrix)
 }
 
-func (c *Computer) Toffoli(index1 uint, index2 uint, index3 uint) error {
+func (c *computer) Toffoli(index1 uint, index2 uint, index3 uint) error {
 	matrix := [8][8]complex128{
 		{1, 0, 0, 0, 0, 0, 0, 0},
 		{0, 1, 0, 0, 0, 0, 0, 0},

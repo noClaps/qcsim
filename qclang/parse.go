@@ -11,7 +11,7 @@ import (
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
-func (q *QCLang) parseTree(nodes []tree_sitter.Node, depth uint) error {
+func (q *qcLang) parseTree(nodes []tree_sitter.Node, depth uint) error {
 	for _, node := range nodes {
 		cursor := node.Walk()
 		children := node.Children(cursor)
@@ -21,27 +21,27 @@ func (q *QCLang) parseTree(nodes []tree_sitter.Node, depth uint) error {
 				return err
 			}
 		case "measure":
-			q.addInstr(Measure, children, "uint")
+			q.addInstr(measure, children, "uint")
 		case "pauli_x":
-			q.addInstr(PauliX, children, "var_name")
+			q.addInstr(pauliX, children, "var_name")
 		case "pauli_y":
-			q.addInstr(PauliY, children, "var_name")
+			q.addInstr(pauliY, children, "var_name")
 		case "pauli_z":
-			q.addInstr(PauliZ, children, "var_name")
+			q.addInstr(pauliZ, children, "var_name")
 		case "hadamard":
-			q.addInstr(Hadamard, children, "var_name")
+			q.addInstr(hadamard, children, "var_name")
 		case "phase":
-			q.addInstr(Phase, children, "var_name")
+			q.addInstr(phase, children, "var_name")
 		case "pi_by_8":
-			q.addInstr(PiBy8, children, "var_name")
+			q.addInstr(piBy8, children, "var_name")
 		case "controlled_not":
-			q.addInstr(ControlledNot, children, "var_name")
+			q.addInstr(controlledNot, children, "var_name")
 		case "controlled_z":
-			q.addInstr(ControlledZ, children, "var_name")
+			q.addInstr(controlledZ, children, "var_name")
 		case "swap":
-			q.addInstr(Swap, children, "var_name")
+			q.addInstr(swap, children, "var_name")
 		case "toffoli":
-			q.addInstr(Toffoli, children, "var_name")
+			q.addInstr(toffoli, children, "var_name")
 		default:
 			if node.ChildCount() > 0 {
 				q.parseTree(children, depth+1)
@@ -52,7 +52,7 @@ func (q *QCLang) parseTree(nodes []tree_sitter.Node, depth uint) error {
 	return nil
 }
 
-func (q *QCLang) addVariable(children []tree_sitter.Node) error {
+func (q *qcLang) addVariable(children []tree_sitter.Node) error {
 	varName := q.getSlice(children[0].Range())
 
 	varExpr := children[2]
@@ -92,11 +92,11 @@ func (q *QCLang) addVariable(children []tree_sitter.Node) error {
 	if err != nil {
 		return err
 	}
-	q.Variables = append(q.Variables, QCVariable{varName, *newQubit})
+	q.variables = append(q.variables, qcVariable{varName, *newQubit})
 	return nil
 }
 
-func (q *QCLang) addInstr(instr Instruction, children []tree_sitter.Node, grammarName string) {
+func (q *qcLang) addInstr(instr gate, children []tree_sitter.Node, grammarName string) {
 	args := slices.Collect(func(yield func(string) bool) {
 		for _, node := range children {
 			if node.GrammarName() == grammarName {
@@ -118,18 +118,18 @@ func (q *QCLang) addInstr(instr Instruction, children []tree_sitter.Node, gramma
 		}
 	})
 
-	q.Instructions = append(q.Instructions, QCFunction{instr, args})
+	q.instructions = append(q.instructions, qcFunction{instr, args})
 }
 
-func (q *QCLang) getSlice(nodeRange tree_sitter.Range) string {
+func (q *qcLang) getSlice(nodeRange tree_sitter.Range) string {
 	start := nodeRange.StartPoint
 	end := nodeRange.EndPoint
-	lines := slices.Collect(strings.Lines(q.Input))
+	lines := slices.Collect(strings.Lines(q.input))
 
 	return lines[start.Row][start.Column:end.Column]
 }
 
-func (q *QCLang) getNumValue(children []tree_sitter.Node) (complex128, error) {
+func (q *qcLang) getNumValue(children []tree_sitter.Node) (complex128, error) {
 	switch {
 	case q.getSlice(children[0].Range()) == "|0>":
 		return 1, nil
@@ -144,7 +144,7 @@ func (q *QCLang) getNumValue(children []tree_sitter.Node) (complex128, error) {
 	}
 }
 
-func (q *QCLang) parseExpr(node tree_sitter.Node) (complex128, error) {
+func (q *qcLang) parseExpr(node tree_sitter.Node) (complex128, error) {
 	switch node.GrammarName() {
 	case "number":
 		return strconv.ParseComplex(q.getSlice(node.Range()), 128)

@@ -6,7 +6,7 @@ import (
 	"github.com/noclaps/qcsim/qubit"
 )
 
-func (c *Computer) apply1(index uint, matrix [2][2]complex128) error {
+func (c *computer) apply1(index uint, matrix [2][2]complex128) error {
 	if len(c.state) < 1 {
 		return fmt.Errorf("Not enough qubits in computer")
 	}
@@ -27,7 +27,7 @@ func (c *Computer) apply1(index uint, matrix [2][2]complex128) error {
 	return nil
 }
 
-func (c *Computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) error {
+func (c *computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) error {
 	if len(c.state) < 2 {
 		return fmt.Errorf("Not enough qubits in computer")
 	}
@@ -66,7 +66,7 @@ func (c *Computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) err
 	return nil
 }
 
-func (c *Computer) apply3(index1 uint, index2 uint, index3 uint, matrix [8][8]complex128) error {
+func (c *computer) apply3(index1 uint, index2 uint, index3 uint, matrix [8][8]complex128) error {
 	if len(c.state) < 3 {
 		return fmt.Errorf("Not enough qubits in computer")
 	}
