@@ -44,7 +44,9 @@ func (q *qcLang) parseTree(nodes []tree_sitter.Node, depth uint) error {
 			q.addInstr(toffoli, children, "var_name")
 		default:
 			if node.ChildCount() > 0 {
-				q.parseTree(children, depth+1)
+				if err := q.parseTree(children, depth+1); err != nil {
+					return err
+				}
 			}
 		}
 	}
