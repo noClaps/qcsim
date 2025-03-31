@@ -43,7 +43,7 @@ func (c *computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) err
 	outputAmps := [4]complex128{}
 	for i, amp := range inputAmps {
 		for o := range outputAmps {
-			outputAmps[0] += matrix[o][i] * amp
+			outputAmps[o] += matrix[o][i] * amp
 		}
 	}
 
