@@ -18,12 +18,8 @@ func (c *computer) apply1(index uint, matrix [2][2]complex128) error {
 	zero := q.Zero*matrix[0][0] + q.One*matrix[0][1]
 	one := q.Zero*matrix[1][0] + q.One*matrix[1][1]
 
-	newQubit, err := qubit.New(zero, one)
-	if err != nil {
-		return err
-	}
-
-	c.state[index] = *newQubit
+	newQubit := qubit.New(zero, one)
+	c.state[index] = newQubit
 	return nil
 }
 
@@ -51,17 +47,11 @@ func (c *computer) apply2(index1 uint, index2 uint, matrix [4][4]complex128) err
 		}
 	}
 
-	newQ1, err := qubit.New(outputAmps[0]+outputAmps[1], outputAmps[2]+outputAmps[3])
-	if err != nil {
-		return err
-	}
-	newQ2, err := qubit.New(outputAmps[0]+outputAmps[2], outputAmps[1]+outputAmps[3])
-	if err != nil {
-		return err
-	}
+	newQ1 := qubit.New(outputAmps[0]+outputAmps[1], outputAmps[2]+outputAmps[3])
+	newQ2 := qubit.New(outputAmps[0]+outputAmps[2], outputAmps[1]+outputAmps[3])
 
-	c.state[index1] = *newQ1
-	c.state[index2] = *newQ2
+	c.state[index1] = newQ1
+	c.state[index2] = newQ2
 
 	return nil
 }
@@ -96,22 +86,13 @@ func (c *computer) apply3(index1 uint, index2 uint, index3 uint, matrix [8][8]co
 		}
 	}
 
-	newQ1, err := qubit.New(outputAmps[0]+outputAmps[1]+outputAmps[2]+outputAmps[3], outputAmps[4]+outputAmps[5]+outputAmps[6]+outputAmps[7])
-	if err != nil {
-		return err
-	}
-	newQ2, err := qubit.New(outputAmps[0]+outputAmps[1]+outputAmps[4]+outputAmps[5], outputAmps[2]+outputAmps[3]+outputAmps[6]+outputAmps[7])
-	if err != nil {
-		return err
-	}
-	newQ3, err := qubit.New(outputAmps[0]+outputAmps[2]+outputAmps[4]+outputAmps[6], outputAmps[1]+outputAmps[3]+outputAmps[5]+outputAmps[7])
-	if err != nil {
-		return err
-	}
+	newQ1 := qubit.New(outputAmps[0]+outputAmps[1]+outputAmps[2]+outputAmps[3], outputAmps[4]+outputAmps[5]+outputAmps[6]+outputAmps[7])
+	newQ2 := qubit.New(outputAmps[0]+outputAmps[1]+outputAmps[4]+outputAmps[5], outputAmps[2]+outputAmps[3]+outputAmps[6]+outputAmps[7])
+	newQ3 := qubit.New(outputAmps[0]+outputAmps[2]+outputAmps[4]+outputAmps[6], outputAmps[1]+outputAmps[3]+outputAmps[5]+outputAmps[7])
 
-	c.state[index1] = *newQ1
-	c.state[index2] = *newQ2
-	c.state[index3] = *newQ3
+	c.state[index1] = newQ1
+	c.state[index2] = newQ2
+	c.state[index3] = newQ3
 
 	return nil
 }

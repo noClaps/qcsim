@@ -1,6 +1,7 @@
 package qclang
 
 import (
+	"fmt"
 	"math"
 	"math/cmplx"
 	"slices"
@@ -90,11 +91,12 @@ func (q *qcLang) addVariable(children []tree_sitter.Node) error {
 		qubitOne = qubit
 	}
 
-	newQubit, err := qubit.New(qubitZero, qubitOne)
-	if err != nil {
-		return err
+	newQubit := qubit.New(qubitZero, qubitOne)
+	if !newQubit.IsNormalised() {
+		return fmt.Errorf("Qubit is not normalised: %s = %+v", varName, newQubit)
 	}
-	q.variables = append(q.variables, qcVariable{varName, *newQubit})
+
+	q.variables = append(q.variables, qcVariable{varName, newQubit})
 	return nil
 }
 

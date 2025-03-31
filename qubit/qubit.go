@@ -13,15 +13,11 @@ type Qubit struct {
 
 // Creates a new qubit with the coefficients of |0> and |1> as inputs. If it is
 // not normalised, an error will be returned.
-func New(zero complex128, one complex128) (*Qubit, error) {
-	qubit := Qubit{zero, one}
-	if !qubit.isNormalised() {
-		return nil, fmt.Errorf("Qubit is not normalised: %+v", qubit)
-	}
-	return &qubit, nil
+func New(zero complex128, one complex128) Qubit {
+	return Qubit{zero, one}
 }
 
-func (q *Qubit) isNormalised() bool {
+func (q *Qubit) IsNormalised() bool {
 	return math.Abs(1-(cmplx.Abs(q.Zero)*cmplx.Abs(q.Zero)+cmplx.Abs(q.One)*cmplx.Abs(q.One))) < 0.0001
 }
 
