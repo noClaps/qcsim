@@ -4,10 +4,11 @@ This is a quantum computer simulation research project. It's probably not accura
 
 ## Build instructions
 
+You'll need to have [Go](https://go.dev) and [tree-sitter](https://github.com/tree-sitter/tree-sitter) installed.
+
 ```sh
 git clone https://github.com/noClaps/qcsim.git && cd qcsim
-mise install # https://mise.jdx.dev
-mise build
+make
 ```
 
 ## Usage
