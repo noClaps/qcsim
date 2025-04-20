@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-qc
 HOMEPAGE_URL := https://github.com/noclaps/qcsim
-VERSION := 0.1.1
+VERSION := 0.2.0
 
 # repository
 SRC_DIR := src
