@@ -5,6 +5,10 @@
 ] @punctuation.bracket
 
 [
+    ","
+] @punctuation.delimiter
+
+[
     (number)
     (uint)
 ] @number
@@ -21,21 +25,21 @@
 (var_name) @variable
 
 [
-    "sin"
-    "cos"
-    "tan"
-    "root"
-    "measure"
-    "x"
-    "y"
-    "z"
-    "hadamard"
-    "phase"
-    "pi_8"
-    "cnot"
-    "cz"
-    "swap"
-    "toffoli"
+    (sin)
+    (cos)
+    (tan)
+    (root)
+    (measure)
+    (pauli_x)
+    (pauli_y)
+    (pauli_z)
+    (hadamard)
+    (phase)
+    (pi_by_8)
+    (controlled_not)
+    (controlled_z)
+    (swap)
+    (toffoli)
 ] @function
 
 [

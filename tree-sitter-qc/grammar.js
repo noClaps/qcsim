@@ -49,11 +49,18 @@ module.exports = grammar({
       prec.left(3, seq(field("arg1", $._expr), "^", field("arg2", $._expr))),
 
     _var_fn: ($) => choice($.sin, $.cos, $.tan, $.root),
-    sin: ($) => seq("sin(", field("arg", $._expr), ")"),
-    cos: ($) => seq("cos(", field("arg", $._expr), ")"),
-    tan: ($) => seq("tan(", field("arg", $._expr), ")"),
+    sin: ($) => seq("sin", "(", field("arg", $._expr), ")"),
+    cos: ($) => seq("cos", "(", field("arg", $._expr), ")"),
+    tan: ($) => seq("tan", "(", field("arg", $._expr), ")"),
     root: ($) =>
-      seq("root(", field("arg1", $._expr), ",", field("arg2", $._expr), ")"),
+      seq(
+        "root",
+        "(",
+        field("arg1", $._expr),
+        ",",
+        field("arg2", $._expr),
+        ")",
+      ),
 
     _constant: ($) => choice($.pi, $.imag, $.euler),
     pi: (_) => "PI",
