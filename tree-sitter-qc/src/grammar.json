@@ -396,7 +396,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "sin("
+          "value": "sin"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "FIELD",
@@ -417,7 +421,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "cos("
+          "value": "cos"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "FIELD",
@@ -438,7 +446,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "tan("
+          "value": "tan"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "FIELD",
@@ -459,7 +471,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "root("
+          "value": "root"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "FIELD",

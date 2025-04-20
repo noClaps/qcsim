@@ -1482,7 +1482,7 @@
     "named": false
   },
   {
-    "type": "cos(",
+    "type": "cos",
     "named": false
   },
   {
@@ -1522,11 +1522,11 @@
     "named": false
   },
   {
-    "type": "root(",
+    "type": "root",
     "named": false
   },
   {
-    "type": "sin(",
+    "type": "sin",
     "named": false
   },
   {
@@ -1534,7 +1534,7 @@
     "named": false
   },
   {
-    "type": "tan(",
+    "type": "tan",
     "named": false
   },
   {
