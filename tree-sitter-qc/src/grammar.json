@@ -570,7 +570,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "measure("
+          "value": "measure"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "CHOICE",
@@ -595,7 +599,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "x("
+          "value": "x"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -612,7 +620,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "y("
+          "value": "y"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -629,7 +641,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "z("
+          "value": "z"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -646,7 +662,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "hadamard("
+          "value": "hadamard"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -663,7 +683,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "phase("
+          "value": "phase"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -680,7 +704,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "pi_8("
+          "value": "pi_8"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -697,7 +725,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "cnot("
+          "value": "cnot"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -722,7 +754,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "cz("
+          "value": "cz"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -747,7 +783,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "swap("
+          "value": "swap"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -772,7 +812,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "toffoli("
+          "value": "toffoli"
+        },
+        {
+          "type": "STRING",
+          "value": "("
         },
         {
           "type": "SYMBOL",
@@ -800,7 +844,7 @@
         }
       ]
     },
-    "_comment": {
+    "comment": {
       "type": "SEQ",
       "members": [
         {
@@ -821,7 +865,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_comment"
+      "name": "comment"
     }
   ],
   "conflicts": [],
