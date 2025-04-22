@@ -6,7 +6,7 @@ import (
 	"math/cmplx"
 	"math/rand"
 
-	"github.com/noclaps/qcsim/qubit"
+	"github.com/qcsim/qcsim/qubit"
 )
 
 type computer struct {

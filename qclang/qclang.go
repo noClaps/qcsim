@@ -5,9 +5,9 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/noclaps/qcsim/computer"
-	"github.com/noclaps/qcsim/qubit"
-	tree_sitter_qc "github.com/noclaps/qcsim/tree-sitter-qc/bindings/go"
+	"github.com/qcsim/qcsim/computer"
+	"github.com/qcsim/qcsim/qubit"
+	tree_sitter_qc "github.com/qcsim/tree-sitter-qc/bindings/go"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 

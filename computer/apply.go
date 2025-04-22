@@ -3,7 +3,7 @@ package computer
 import (
 	"fmt"
 
-	"github.com/noclaps/qcsim/qubit"
+	"github.com/qcsim/qcsim/qubit"
 )
 
 func (c *computer) apply1(index uint, matrix [2][2]complex128) error {

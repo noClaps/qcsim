@@ -8,7 +8,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/noclaps/qcsim/qclang"
+	"github.com/qcsim/qcsim/qclang"
 )
 
 func findArg(argv []string) (string, []string) {

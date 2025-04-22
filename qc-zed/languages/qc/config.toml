@@ -1,8 +1,0 @@
-name = "QC"
-grammar = "qc"
-path_suffixes = ["qc"]
-line_comments = ["// "]
-autoclose_before = ")"
-brackets = [
-    { start = "(", end = ")", close = true, newline = true },
-]

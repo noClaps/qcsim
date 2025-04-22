@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/noclaps/qcsim/qubit"
+	"github.com/qcsim/qcsim/qubit"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
