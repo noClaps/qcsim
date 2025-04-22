@@ -7,7 +7,18 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        versions:
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+    runs-on: ${{ matrix.versions.os }}
+    name: ${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -16,11 +27,8 @@ jobs:
       - uses: tree-sitter/setup-action@v2
         with:
           install-lib: false
-      - run: tree-sitter generate
-        working-directory: tree-sitter-qc
-      - uses: goreleaser/goreleaser-action@v6
+      - run: GOOS=${{ matrix.versions.goos }} GOARCH=${{ matrix.versions.goarch }} make
+      - run: mv qcsim qcsim-${{ github.ref_name }}-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
+      - uses: softprops/action-gh-release@v2
         with:
-          version: latest
-          args: release --clean --skip validate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          files: qcsim-${{ github.ref_name }}-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
