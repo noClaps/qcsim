@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.0
+
+### Breaking changes
+
+- Move to a new organisation and split repositories. The Zed extension is now in https://github.com/qcsim/qc-zed, and the Tree-sitter grammar is in https://github.com/qcsim/tree-sitter-qc.
+
+### Other changes
+
+- Bump Go version in `go.mod`.
+
 ## v0.2.0
 
 ### Breaking changes
