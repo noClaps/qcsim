@@ -4,7 +4,13 @@ This is a quantum computer simulation research project. It's probably not accura
 
 ## Build instructions
 
-You'll need to have [Go](https://go.dev) installed.
+You'll need to have [Go](https://go.dev) and a C compiler installed.
+
+```sh
+go install github.com/qcsim/qcsim@latest
+```
+
+You can also clone the repo and build it yourself:
 
 ```sh
 git clone https://github.com/qcsim/qcsim.git && cd qcsim
