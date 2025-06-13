@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/cmplx"
+	"math/rand/v2"
 )
 
 type Qubit struct {
@@ -20,11 +21,17 @@ func (q *Qubit) IsNormalised() bool {
 	return math.Abs(1-(cmplx.Abs(q.Zero)*cmplx.Abs(q.Zero)+cmplx.Abs(q.One)*cmplx.Abs(q.One))) < 0.0001
 }
 
-// Returns the probability of the qubit returning zero when measured. This
-// should be used with a random number generator between 0.0 and 1.0 to set the
-// threshold. Below that threshold, 0 is returned, and above it, 1.
-func (q *Qubit) ProbabilityZero() float64 {
-	return cmplx.Abs(q.Zero) * cmplx.Abs(q.Zero)
+// Measures the qubit using a random number generator and returns either a 0 or
+// a 1 to signify the state of the qubit. Note that this function does
+// not check if the qubit is normalised.
+func (q *Qubit) Measure() uint {
+	randomVal := rand.Float64()
+	zeroProb := cmplx.Abs(q.Zero) * cmplx.Abs(q.Zero)
+	if randomVal <= zeroProb {
+		return 0
+	} else {
+		return 1
+	}
 }
 
 func (q Qubit) String() string {

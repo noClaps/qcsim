@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"math"
 	"math/cmplx"
-	"math/rand"
 	"strings"
 
 	"github.com/qcsim/qcsim/qubit"
@@ -35,13 +34,7 @@ func (c *computer) Measure(count uint) string {
 	for range count {
 		measuredState := ""
 		for _, q := range c.state {
-			randomVal := rand.Float64()
-			zeroProb := q.ProbabilityZero()
-			if randomVal <= zeroProb {
-				measuredState += fmt.Sprint(0)
-			} else {
-				measuredState += fmt.Sprint(1)
-			}
+			measuredState += fmt.Sprint(q.Measure())
 		}
 
 		if count == 1 {
