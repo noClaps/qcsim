@@ -1,57 +1,34 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"log"
-	"os"
-	"slices"
-	"strings"
+	"log/slog"
+	"math/cmplx"
 
-	"github.com/qcsim/qcsim/qclang"
+	"github.com/qcsim/qcsim/computer"
+	"github.com/qcsim/qcsim/qubit"
 )
 
-func findArg(argv []string) (string, []string) {
-	for i := range argv {
-		if (i == 0 && argv[i][0] != '-') || (i-1 >= 0 && argv[i-1][0] != '-') {
-			return argv[i], slices.Concat(argv[:i], argv[i+1:])
-		}
-	}
-
-	return "", argv
-}
-
 func main() {
-	var help bool
-	flag.BoolVar(&help, "help", false, "Display this help message and exit")
-	flag.BoolVar(&help, "h", false, "Display this help message and exit")
+	q0 := qubit.New(1/cmplx.Sqrt(2), 1/cmplx.Sqrt(2))
+	q1 := qubit.New(1, 0)
+	q2 := qubit.New(0, 1)
+	q3 := qubit.New(1, 1)
 
-	inputFile, remainingArgs := findArg(os.Args[1:])
-	err := flag.CommandLine.Parse(remainingArgs)
-
-	if help || err != nil {
-		fmt.Println(strings.TrimSpace(`
-USAGE: qcsim <input>
-
-ARGUMENTS:
-  <input>     QC Instructions file to be run
-
-OPTIONS:
-  -h, --help  Display this help message and exit
-`))
-		return
+	qc := computer.New([]qubit.Qubit{q0, q1, q2, q3})
+	if err := qc.Hadamard(0); err != nil {
+		slog.Error("Error performing Hadamard", "error", err)
+	}
+	if err := qc.PauliX(0); err != nil {
+		slog.Error("Error performing Pauli X", "error", err)
+	}
+	if err := qc.PauliX(1); err != nil {
+		slog.Error("Error performing Pauli X", "error", err)
+	}
+	if err := qc.Toffoli(0, 1, 2); err != nil {
+		slog.Error("Error performing Toffoli", "error", err)
 	}
 
-	file, err := os.ReadFile(inputFile)
-	if err != nil {
-		log.Fatalln("[ERROR]", err)
-	}
-
-	qc := qclang.New(string(file))
-	if err = qc.Parse(); err != nil {
-		log.Fatalln("[ERROR]", err)
-	}
-	if err = qc.Run(); err != nil {
-		log.Fatalln("[ERROR]", err)
-	}
+	var measureCount uint = 100000
+	fmt.Println(qc.Measure(measureCount)) // returns "110"
 }

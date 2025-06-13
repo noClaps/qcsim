@@ -11,8 +11,7 @@ type Qubit struct {
 	One  complex128
 }
 
-// Creates a new qubit with the coefficients of |0> and |1> as inputs. If it is
-// not normalised, an error will be returned.
+// Creates a new qubit with the coefficients of |0> and |1> as inputs.
 func New(zero complex128, one complex128) Qubit {
 	return Qubit{zero, one}
 }

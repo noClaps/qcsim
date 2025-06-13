@@ -4,82 +4,90 @@ This is a quantum computer simulation research project. It's probably not accura
 
 ## Build instructions
 
-You'll need to have [Go](https://go.dev) and a C compiler installed.
-
-```sh
-go install github.com/qcsim/qcsim@latest
-```
-
-You can also clone the repo and build it yourself:
+You'll need to have [Go](https://go.dev) installed.
 
 ```sh
 git clone https://github.com/qcsim/qcsim.git && cd qcsim
-go build
+go run .
 ```
 
 ## Usage
 
-```
-USAGE: qcsim <input>
+You should start by creating new qubits:
 
-ARGUMENTS:
-  <input>     QC Instructions file to be run
+```go
+import (
+	"math/cmplx"
 
-OPTIONS:
-  -h, --help  Display this help message and exit
-```
+	"github.com/qcsim/qcsim/qubit"
+)
 
-You can run a QC instructions file with `qcsim path/to/file.qc`. The syntax for it is described in the [QC instructions syntax](#qc-instructions-syntax) section.
-
-## QC instructions syntax
-
-You have to start by defining your qubits. The syntax for this is:
-
-```
-qubit = |0>
+func main() {
+	q0 := qubit.New(1/cmplx.Sqrt(2), 1/cmplx.Sqrt(2))
+	q1 := qubit.New(1, 0)
+	q2 := qubit.New(0, 1)
+}
 ```
 
-You can also add values in front of your qubits, and have a superposition of both `|0>` and `|1>` units, like so:
+Then you can initialise a computer with those qubits:
 
-```
-qubit = 0.707 |0>, 0.707 |1>
-```
+```go
+import (
+	// ...
 
-You can add (`+`), subtract (`-`), multiply (`*`), divide (`/`) or exponent (`^`) values together.
+	"github.com/qcsim/qcsim/computer"
+)
 
-You also have access to some functions:
+func main() {
+	// ...
 
-- `sin(val)`: The sine function. The argument can be a complex number.
-- `cos(val)`: The cosine function. The argument can be a complex number.
-- `tan(val)`: The tangent function. The argument can be a complex number.
-- `root(val, power)`: The root function. Both arguments can be complex numbers.
-
-and some constants:
-
-- `PI`: Archimedes' constant, $\pi$.
-- `E`: Euler's number, $e$.
-- `I`: Imaginary unit, $i$.
-
-You can use these to create more complex qubits, such as:
-
-```
-q1 = cos(PI/2) |0>, I * sin(PI/2) |1>
-q2 = (1 / root(2, 2)) |0>, (1 / root(2, 2)) |1>
+	qc := computer.New([]qubit.Qubit{q0, q1, q2})
+}
 ```
 
-Variable names can only contain letters and numbers. Qubits must also be normalised, and the code will tell you if the qubits you've defined are normalised or not.
+This will add your qubits to the computer in the order that you put them in the array. After this, you can use array indexing to apply operations to the qubits in the computer, using the gates you have available:
 
-Once you've defined your qubits, you can start applying them to quantum logic gates. Here are the gates you have available:
+- `PauliX`
+- `PauliY`
+- `PauliZ`
+- `Hadamard`
+- `Phase`
+- `PiBy8`
+- `ControlledNot`
+- `ControlledZ`
+- `Swap`
+- `Toffoli`
 
-- `x(q1)`: The Pauli X gate.
-- `y(q1)`: The Pauli Y gate.
-- `z(q1)`: The Pauli Z gate.
-- `hadamard(q1)`: The Hadamard gate.
-- `phase(q1)`: The phase gate.
-- `pi_8(q1)`: The π/8 gate.
-- `cnot(q1, q2)`: The controlled NOT gate.
-- `cz(q1, q2)`: The controlled Z gate.
-- `swap(q1, q2)`: The SWAP gate.
-- `toffoli(q1, q2, q3)`: The Toffoli gate.
+For example:
 
-You can also call the `measure()` function to measure the qubit at any point, with an optional argument like `measure(1000)` to specify how many times to repeat the measurement.
+```go
+func main() {
+	// ...
+
+	if err := qc.Hadamard(0); err != nil {
+		slog.Error("Error performing Hadamard", "error", err)
+	}
+	if err := qc.PauliX(0); err != nil {
+		slog.Error("Error performing Pauli X", "error", err)
+	}
+	if err := qc.PauliX(1); err != nil {
+		slog.Error("Error performing Pauli X", "error", err)
+	}
+	if err := qc.Toffoli(0, 1, 2); err != nil {
+		slog.Error("Error performing Toffoli", "error", err)
+	}
+}
+```
+
+Once you're done, you can output the state of the system using `Measure`:
+
+```go
+func main() {
+	// ...
+
+	var measureCount uint = 100000
+	fmt.Println(qc.Measure(measureCount))
+}
+```
+
+If the measure count is 1, then simply the state of the system will be returned, but if it is greater than 1, then a table with the state and its corresponding count will be returned.
