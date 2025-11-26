@@ -7,7 +7,7 @@ This is a quantum computer simulation research project. It's probably not accura
 You'll need to have [Go](https://go.dev) installed.
 
 ```sh
-git clone https://github.com/qcsim/qcsim.git && cd qcsim
+git clone https://github.com/noClaps/qcsim.git && cd qcsim
 go run .
 ```
 
@@ -19,7 +19,7 @@ You should start by creating new qubits:
 import (
 	"math/cmplx"
 
-	"github.com/qcsim/qcsim/qubit"
+	"github.com/noclaps/qcsim/qubit"
 )
 
 func main() {
@@ -35,7 +35,7 @@ Then you can initialise a computer with those qubits:
 import (
 	// ...
 
-	"github.com/qcsim/qcsim/computer"
+	"github.com/noclaps/qcsim/computer"
 )
 
 func main() {

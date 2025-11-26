@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"math/cmplx"
 
-	"github.com/qcsim/qcsim/computer"
-	"github.com/qcsim/qcsim/qubit"
+	"github.com/noclaps/qcsim/computer"
+	"github.com/noclaps/qcsim/qubit"
 )
 
 func main() {

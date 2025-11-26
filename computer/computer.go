@@ -8,7 +8,7 @@ import (
 	"math/cmplx"
 	"strings"
 
-	"github.com/qcsim/qcsim/qubit"
+	"github.com/noclaps/qcsim/qubit"
 )
 
 type computer struct {
