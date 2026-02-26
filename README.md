@@ -4,81 +4,71 @@ This is a quantum computer simulation research project. It's probably not accura
 
 ## Build instructions
 
-You'll need to have [Go](https://go.dev) installed.
-
 ```sh
 git clone https://github.com/noClaps/qcsim.git && cd qcsim
-go run .
+cargo run
 ```
 
 ## Usage
 
 You should start by creating new qubits:
 
-```go
-q0 := NewQubit()
-q1 := NewQubit()
-q2 := NewQubit()
+```rust
+use qcsim::Qubit;
+
+fn main() {
+  let q0 = Qubit::new();
+  let q1 = Qubit::new();
+  let q2 = Qubit::new();
+}
 ```
 
 Then you can initialise a computer with those qubits:
 
-```go
-import (
-	// ...
+```rust
+use qcsim::Computer;
 
-	"github.com/noclaps/qcsim/computer"
-)
+fn main() {
+    // ...
 
-func main() {
-	// ...
-
-	qc := computer.New([]qubit.Qubit{q0, q1, q2})
+    let mut qc = Computer::new([q0, q1, q2])
 }
 ```
 
 This will add your qubits to the computer in the order that you put them in the array. After this, you can use array indexing to apply operations to the qubits in the computer, using the gates you have available:
 
-- `PauliX`
-- `PauliY`
-- `PauliZ`
-- `Hadamard`
-- `Phase`
-- `PiBy8`
-- `ControlledNot`
-- `ControlledZ`
-- `Swap`
-- `Toffoli`
+- `pauli_x`
+- `pauli_y`
+- `pauli_z`
+- `hadamard`
+- `phase`
+- `pi_by_8`
+- `controlled_not`
+- `controlled_z`
+- `swap`
+- `toffoli`
 
 For example:
 
-```go
-func main() {
-	// ...
+```rust
+fn main() {
+    // ...
 
-	if err := qc.Hadamard(0); err != nil {
-		slog.Error("Error performing Hadamard", "error", err)
-	}
-	if err := qc.PauliX(0); err != nil {
-		slog.Error("Error performing Pauli X", "error", err)
-	}
-	if err := qc.PauliX(1); err != nil {
-		slog.Error("Error performing Pauli X", "error", err)
-	}
-	if err := qc.Toffoli(0, 1, 2); err != nil {
-		slog.Error("Error performing Toffoli", "error", err)
-	}
+    qc.hadamard(0);
+    qc.pauli_x(0);
+    qc.pauli_x(1);
+    qc.toffoli(0, 1, 2);
 }
 ```
 
-Once you're done, you can output the state of the system using `Measure`:
+Once you're done, you can output the state of the system using `measure`:
 
-```go
-func main() {
-	// ...
+```rust
+fn main() {
+    // ...
 
-	var measureCount uint = 100000
-	fmt.Println(qc.Measure(measureCount))
+    let measure_count = 100_000;
+    println!("{}", qc.measure(measure_count));
 }
 ```
 
