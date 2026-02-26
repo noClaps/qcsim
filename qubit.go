@@ -1,8 +1,7 @@
-package qubit
+package main
 
 import (
 	"fmt"
-	"math"
 	"math/cmplx"
 	"math/rand/v2"
 )
@@ -12,13 +11,9 @@ type Qubit struct {
 	One  complex128
 }
 
-// Creates a new qubit with the coefficients of |0> and |1> as inputs.
-func New(zero complex128, one complex128) Qubit {
-	return Qubit{zero, one}
-}
-
-func (q *Qubit) IsNormalised() bool {
-	return math.Abs(1-(cmplx.Abs(q.Zero)*cmplx.Abs(q.Zero)+cmplx.Abs(q.One)*cmplx.Abs(q.One))) < 0.0001
+// Creates a new qubit initialised to |0>
+func NewQubit() Qubit {
+	return Qubit{Zero: 1, One: 0}
 }
 
 // Measures the qubit using a random number generator and returns either a 0 or

@@ -16,17 +16,9 @@ go run .
 You should start by creating new qubits:
 
 ```go
-import (
-	"math/cmplx"
-
-	"github.com/noclaps/qcsim/qubit"
-)
-
-func main() {
-	q0 := qubit.New(1/cmplx.Sqrt(2), 1/cmplx.Sqrt(2))
-	q1 := qubit.New(1, 0)
-	q2 := qubit.New(0, 1)
-}
+q0 := NewQubit()
+q1 := NewQubit()
+q2 := NewQubit()
 ```
 
 Then you can initialise a computer with those qubits:
