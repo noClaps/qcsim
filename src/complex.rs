@@ -5,8 +5,8 @@ use std::{
 };
 
 /// Complex(real: f64, imag: f64)
-#[derive(Clone, Copy)]
-pub struct Complex(f64, f64);
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Complex(pub f64, pub f64);
 
 impl Complex {
     pub const ZERO: Self = Complex(0.0, 0.0);
@@ -14,12 +14,13 @@ impl Complex {
     pub const I: Self = Complex(0.0, 1.0);
     pub const SQRT_2: Self = Complex(SQRT_2, 0.0);
 
-    /// Creates a complex number of the form `r*exp(i*theta)`
-    pub fn rect(r: f64, theta: f64) -> Self {
+    /// Creates a complex number of the form `exp(i*theta)`
+    pub fn cis(theta: f64) -> Self {
         let (s, c) = theta.sin_cos();
-        Self(r * c, r * s)
+        Self(c, s)
     }
 
+    /// Returns the complex conjugate `z^*`
     pub fn conj(&self) -> Self {
         Self(self.0, -self.1)
     }

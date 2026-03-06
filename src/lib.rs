@@ -2,7 +2,7 @@
 
 mod complex;
 mod computer;
-mod qubit;
+mod matrix;
+mod operators;
 
 pub use crate::computer::Computer;
-pub use qubit::Qubit;
