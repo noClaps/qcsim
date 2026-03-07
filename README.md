@@ -39,23 +39,15 @@ After this, you can use array indexing to apply operations to the qubits in the 
 For example:
 
 ```rust
-fn main() {
-    // ...
-
-    qc.hadamard(0);
-    qc.controlled_not(0, 1);
-    qc.toffoli(0, 1, 2);
-}
+qc.hadamard(0);
+qc.controlled_not(0, 1);
+qc.toffoli(0, 1, 2);
 ```
 
 Once you're done, you can output the state of the system using `measure`:
 
 ```rust
-fn main() {
-    // ...
-
-    println!("{}", qc.measure());
-}
+println!("{}", qc.measure());
 ```
 
 This will return the measured state of the entire computer as a string, along with taking ownership of the computer instance so that no more operations can happen, since the state should only be measured at the very end.

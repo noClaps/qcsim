@@ -21,7 +21,7 @@ impl Computer {
                 return format!("{:0>1$}", format!("{i:b}"), self.1);
             }
         }
-        return format!("{:b}", self.0.len() - 1);
+        format!("{:b}", self.0.len() - 1)
     }
 
     /// Applies the Pauli X operator on the qubit. The index starts at 0 for the first index.

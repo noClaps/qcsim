@@ -37,12 +37,10 @@ impl Mul<&Vec<Complex>> for Matrix {
     type Output = Vec<Complex>;
     fn mul(self, rhs: &Vec<Complex>) -> Self::Output {
         let mut out_vec = vec![Complex::ZERO; rhs.len()];
-        for r in 0..self.0.len() {
-            let mut row_sum = Complex::ZERO;
-            for c in 0..self.0[r].len() {
-                row_sum += self.0[r][c] * rhs[c];
+        for (r, row) in out_vec.iter_mut().enumerate().take(self.0.len()) {
+            for (c, &val) in rhs.iter().enumerate().take(self.0[r].len()) {
+                *row += self.0[r][c] * val;
             }
-            out_vec[r] = row_sum;
         }
         out_vec
     }
@@ -52,9 +50,9 @@ impl Add for Matrix {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         let mut sum = vec![vec![Complex::ZERO; self.0.len()]; self.0.len()];
-        for r in 0..self.0.len() {
-            for c in 0..self.0[r].len() {
-                sum[r][c] = self.0[r][c] + rhs.0[r][c];
+        for (r, row) in sum.iter_mut().enumerate().take(self.0.len()) {
+            for (c, val) in row.iter_mut().enumerate().take(self.0[r].len()) {
+                *val = self.0[r][c] + rhs.0[r][c];
             }
         }
         Self(sum)
