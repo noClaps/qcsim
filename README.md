@@ -5,7 +5,7 @@ This is a quantum computer simulation research project. It's probably not accura
 ## Build instructions
 
 ```sh
-git clone https://codeberg.org/noClaps/qcsim.git && cd qcsim
+git clone https://codefloe.com/noClaps/qcsim.git && cd qcsim
 cargo run
 ```
 
