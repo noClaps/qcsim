@@ -5,3 +5,12 @@ edition = "2024"
 
 [dependencies]
 fastrand = "2.4.1"
+num-complex = "0.4.6"
+qcsim-gates = { path = "crates/gate" }
+qcsim-matrix = { path = "crates/matrix" }
+
+[lib]
+doctest = false
+
+[[example]]
+name = "cnot"

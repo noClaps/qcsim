@@ -1,8 +1,6 @@
 #![doc = include_str!("../README.md")]
 
-mod complex;
-mod computer;
-mod matrix;
-mod operators;
+pub mod computer;
 
-pub use crate::computer::Computer;
+pub use qcsim_gates::{Ctrl, Gate};
+pub use qcsim_matrix::{Matrix, matrix};
