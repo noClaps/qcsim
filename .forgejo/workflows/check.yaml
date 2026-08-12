@@ -12,4 +12,5 @@ jobs:
       - uses: https://github.com/dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - run: cargo clippy --release
+      - run: cargo clippy
+      - run: cargo test

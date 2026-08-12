@@ -1,6 +1,8 @@
-#![doc = include_str!("../README.md")]
+mod circuit;
+mod gate;
+mod sampler;
+#[cfg(test)]
+pub mod tests;
 
-pub mod computer;
-
-pub use qcsim_gates::{Ctrl, Gate};
-pub use qcsim_matrix::{Matrix, matrix};
+pub use circuit::QuantumCircuit;
+pub use sampler::sample;
