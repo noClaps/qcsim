@@ -1,12 +1,9 @@
 use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 
-use ndarray::{Array2, array};
+use ndarray::array;
 use num_complex::Complex64;
 
-use crate::{
-    QuantumCircuit,
-    gate::{complex, kron_all},
-};
+use crate::{QuantumCircuit, complex};
 
 // single qubit gates
 impl QuantumCircuit {
@@ -68,8 +65,7 @@ impl QuantumCircuit {
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(&mut self, theta: f64, phi: f64, lam: f64, idx: usize) {
-        let mut matrices = vec![Array2::eye(2); self.num_qubits];
-        matrices[idx] = array![
+        let mat = array![
             [
                 complex!(theta / 2.0).cos(),
                 -Complex64::cis(lam) * (theta / 2.0).sin()
@@ -79,8 +75,7 @@ impl QuantumCircuit {
                 Complex64::cis(phi + lam) * (theta / 2.0).cos()
             ]
         ];
-        let mat = kron_all(&matrices);
-        self.qubits = mat.dot(&self.qubits);
+        self.unitary(mat, &[idx]);
     }
     /// The single-qubit Pauli-X gate (σ_x).
     pub fn x(&mut self, idx: usize) {

@@ -1,9 +1,6 @@
-use ndarray::{Array2, array};
+use ndarray::array;
 
-use crate::{
-    QuantumCircuit,
-    gate::{complex, kron_all},
-};
+use crate::{QuantumCircuit, complex};
 
 // 2 qubit gates
 impl QuantumCircuit {
@@ -82,25 +79,13 @@ impl QuantumCircuit {
     }
     /// Controlled-X gate.
     pub fn cx(&mut self, q0: usize, q1: usize) {
-        let mut matrices1 = vec![Array2::eye(2); self.num_qubits];
-        matrices1[q0] = array![
-            [complex!(1.0), complex!(0.0)],
-            [complex!(0.0), complex!(0.0)]
+        let mat = array![
+            [complex!(1.0), complex!(0.0), complex!(0.0), complex!(0.0)],
+            [complex!(0.0), complex!(1.0), complex!(0.0), complex!(0.0)],
+            [complex!(0.0), complex!(0.0), complex!(0.0), complex!(1.0)],
+            [complex!(0.0), complex!(0.0), complex!(1.0), complex!(0.0)],
         ];
-        let mut matrices2 = vec![Array2::eye(2); self.num_qubits];
-        matrices2[q0] = array![
-            [complex!(0.0), complex!(0.0)],
-            [complex!(0.0), complex!(1.0)]
-        ];
-        matrices2[q1] = array![
-            [complex!(0.0), complex!(1.0)],
-            [complex!(1.0), complex!(0.0)]
-        ];
-
-        let matrix1 = kron_all(&matrices1);
-        let matrix2 = kron_all(&matrices2);
-        let mat = matrix1 + matrix2;
-        self.qubits = mat.dot(&self.qubits);
+        self.unitary(mat, &[q0, q1]);
     }
     /// Controlled-X gate.
     pub fn cnot(&mut self, q0: usize, q1: usize) {

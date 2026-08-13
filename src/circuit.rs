@@ -1,7 +1,7 @@
-use ndarray::Array1;
+use ndarray::{Array1, Array2};
 use num_complex::Complex64;
 
-use crate::gate::complex;
+use crate::complex;
 
 #[derive(Clone)]
 pub struct QuantumCircuit {
@@ -34,5 +34,45 @@ impl QuantumCircuit {
     pub fn reset(&mut self) {
         self.qubits = Array1::zeros(1 << self.num_qubits);
         self.qubits[0] = complex!(1.0);
+    }
+
+    /// Apply unitary `gate` to `qubits`
+    pub fn unitary(&mut self, gate: Array2<Complex64>, qubits: &[usize]) {
+        let state_len = self.qubits.len();
+        let n = state_len.trailing_zeros() as usize;
+        let k = qubits.len();
+        let local_dim = 1 << k;
+
+        let bit_position = |q: usize| -> usize { n - 1 - q };
+        let mut target_mask = 0usize;
+        for &q in qubits {
+            target_mask |= 1 << bit_position(q);
+        }
+        let mut result = self.qubits.clone();
+
+        for base in 0..state_len {
+            if base & target_mask != 0 {
+                continue;
+            }
+
+            let mut indices = Vec::with_capacity(local_dim);
+            for local_index in 0..local_dim {
+                let mut global_index = base;
+                for (j, &qubit) in qubits.iter().enumerate() {
+                    let local_bit = (local_index >> (k - 1 - j)) & 1;
+                    let global_bit = bit_position(qubit);
+                    global_index |= local_bit << global_bit;
+                }
+                indices.push(global_index);
+            }
+
+            let input_block = Array1::from_vec(indices.iter().map(|&i| self.qubits[i]).collect());
+            let output_block = gate.dot(&input_block);
+            for (local_index, &global_index) in indices.iter().enumerate() {
+                result[global_index] = output_block[local_index];
+            }
+        }
+
+        self.qubits = result;
     }
 }
