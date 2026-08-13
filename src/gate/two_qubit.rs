@@ -2,7 +2,7 @@ use ndarray::array;
 
 use crate::{QuantumCircuit, complex};
 
-// 2 qubit gates
+/// 2 qubit gates
 impl QuantumCircuit {
     /// Controlled-Hadamard gate.
     pub fn ch(&mut self, q0: usize, q1: usize) {

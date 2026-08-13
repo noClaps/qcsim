@@ -5,7 +5,7 @@ use num_complex::Complex64;
 
 use crate::{QuantumCircuit, complex};
 
-// single qubit gates
+/// Single qubit gates
 impl QuantumCircuit {
     /// Single-qubit Hadamard gate.
     pub fn h(&mut self, idx: usize) {

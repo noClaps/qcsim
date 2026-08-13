@@ -2,6 +2,7 @@ use std::f64::consts::{FRAC_PI_2, FRAC_PI_8};
 
 use crate::QuantumCircuit;
 
+/// 3+ qubit gates
 impl QuantumCircuit {
     /// The 3-qubit controlled sqrt-X gate.
     pub fn c3sx(&mut self, q0: usize, q1: usize, q2: usize, q3: usize) {
