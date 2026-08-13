@@ -1,0 +1,14 @@
+on: [push, workflow_dispatch]
+
+jobs:
+  deploy:
+    runs-on: codeberg-tiny-lazy
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v7
+      - uses: https://github.com/dtolnay/rust-toolchain@stable
+      - run: cargo doc --no-deps
+      - uses: https://github.com/cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy target/doc --project-name=qcsim
