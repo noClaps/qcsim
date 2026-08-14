@@ -1,9 +1,9 @@
 use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 
 use ndarray::array;
-use num_complex::Complex64;
+use num_complex::{Complex64, c64};
 
-use crate::{QuantumCircuit, complex};
+use crate::QuantumCircuit;
 
 /// Single qubit gates
 impl QuantumCircuit {
@@ -67,7 +67,7 @@ impl QuantumCircuit {
     pub fn u(&mut self, theta: f64, phi: f64, lam: f64, idx: usize) {
         let mat = array![
             [
-                complex!(theta / 2.0).cos(),
+                c64(theta / 2.0, 0.0).cos(),
                 -Complex64::cis(lam) * (theta / 2.0).sin()
             ],
             [

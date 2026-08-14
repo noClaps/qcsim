@@ -1,7 +1,5 @@
 use ndarray::{Array1, Array2};
-use num_complex::Complex64;
-
-use crate::complex;
+use num_complex::{Complex64, c64};
 
 #[derive(Clone)]
 pub struct QuantumCircuit {
@@ -13,7 +11,7 @@ impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     pub fn new(num_qubits: usize) -> Self {
         let mut qubits = Array1::zeros(1 << num_qubits);
-        qubits[0] = complex!(1.0);
+        qubits[0] = c64(1, 0);
         Self { qubits, num_qubits }
     }
 
@@ -33,7 +31,7 @@ impl QuantumCircuit {
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
         self.qubits = Array1::zeros(1 << self.num_qubits);
-        self.qubits[0] = complex!(1.0);
+        self.qubits[0] = c64(1, 0);
     }
 
     /// Apply unitary `gate` to `qubits`
