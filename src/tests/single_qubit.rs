@@ -7,5 +7,5 @@ fn ch() {
     qc.ch(0, 1); // 1/sqrt(2) (|10> + |11>)
 
     let outputs = sample(qc, 10000);
-    assert_output!(outputs, "10", "11");
+    assert_output!(outputs, 0b10, 0b11);
 }

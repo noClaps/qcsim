@@ -18,16 +18,16 @@ impl QuantumCircuit {
     }
 
     /// Measure the state of the qubits. Consumes the circuit instance.
-    pub fn measure(self) -> String {
+    pub fn measure(self) -> usize {
         let rand = fastrand::f64_inclusive();
         let mut total = 0.0;
         for (i, state) in self.qubits.iter().enumerate() {
             total += state.norm_sqr();
             if total >= rand {
-                return format!("{:0>1$}", format!("{i:b}"), self.num_qubits);
+                return i;
             }
         }
-        format!("{:b}", self.qubits.len() - 1)
+        self.qubits.len() - 1
     }
 
     /// Reset the qubits to the |00...0> state

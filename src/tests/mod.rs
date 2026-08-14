@@ -5,7 +5,7 @@ mod two_qubit;
 macro_rules! assert_output {
     ($output:expr, $($el:literal),* $(,)?) => {
         let keys = [$($el,)*];
-        assert!($output.keys().all(|k| keys.contains(&k.as_str())), "Expected: {:?}\nFound: {:?}", keys, $output);
+        assert!($output.keys().all(|k| keys.contains(k)), "Expected: {:?}\nFound: {:?}", keys, $output);
     };
 }
 pub(crate) use assert_output;
