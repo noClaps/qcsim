@@ -44,10 +44,9 @@ impl QuantumCircuit {
         let local_dim = 1 << k;
 
         let bit_position = |q: usize| -> usize { n - 1 - q };
-        let mut target_mask = 0usize;
-        for &q in qubits {
-            target_mask |= 1 << bit_position(q);
-        }
+        let target_mask = qubits
+            .iter()
+            .fold(0, |acc, &q| acc | (1 << bit_position(q)));
         let mut result = self.qubits.clone();
 
         for base in 0..state_len {
@@ -66,7 +65,7 @@ impl QuantumCircuit {
                 indices.push(global_index);
             }
 
-            let input_block = Array1::from_vec(indices.iter().map(|&i| self.qubits[i]).collect());
+            let input_block = Array1::from_iter(indices.iter().map(|&i| self.qubits[i]));
             let output_block = gate.dot(&input_block);
             for (local_index, &global_index) in indices.iter().enumerate() {
                 result[global_index] = output_block[local_index];
