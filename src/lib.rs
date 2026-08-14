@@ -1,5 +1,6 @@
 mod circuit;
 mod gate;
+mod qubits;
 mod sampler;
 #[cfg(test)]
 pub mod tests;

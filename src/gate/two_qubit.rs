@@ -86,7 +86,7 @@ impl QuantumCircuit {
             [c64(0, 0), c64(0, 0), c64(0, 0), c64(1, 0)],
             [c64(0, 0), c64(0, 0), c64(1, 0), c64(0, 0)],
         ];
-        self.unitary(mat, &[q0, q1]);
+        self.unitary(&mat, &[q0, q1]);
     }
     /// Controlled-X gate.
     pub fn cnot(&mut self, q0: usize, q1: usize) {
