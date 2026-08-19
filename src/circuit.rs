@@ -1,17 +1,17 @@
 use ndarray::{Array1, Array2};
 
-use crate::{Complex, cmplx, qubits::Qubits};
+use crate::{Complex, StateVector, cmplx, qubits::Qubits};
 
 #[derive(Clone)]
 pub struct QuantumCircuit {
-    pub qubits: Array1<Complex>,
+    pub qubits: StateVector,
     pub num_qubits: usize,
 }
 
 impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     pub fn new(num_qubits: usize) -> Self {
-        let mut qubits = Array1::zeros(1 << num_qubits);
+        let mut qubits = StateVector::zeros(1 << num_qubits);
         qubits[0] = cmplx!(1);
         Self { qubits, num_qubits }
     }
@@ -31,7 +31,7 @@ impl QuantumCircuit {
 
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
-        self.qubits = Array1::zeros(1 << self.num_qubits);
+        self.qubits = StateVector::zeros(1 << self.num_qubits);
         self.qubits[0] = cmplx!(1);
     }
 
