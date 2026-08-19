@@ -1,0 +1,155 @@
+use std::ops::{Add, Div, Mul, Neg, Sub};
+
+use num_traits::{One, Zero};
+
+/// Create a new [`Complex`] number
+#[macro_export]
+macro_rules! cmplx {
+    (0) => {
+        $crate::Complex::ZERO
+    };
+    (1) => {
+        $crate::Complex::ONE
+    };
+    (i) => {
+        $crate::Complex::I
+    };
+    ($val:expr) => {
+        $crate::Complex::new($val.into(), 0.0)
+    };
+    ($re:expr, $im:expr) => {
+        $crate::Complex::new($re.into(), $im.into())
+    };
+}
+
+/// A complex number
+#[derive(Clone, Copy)]
+pub struct Complex {
+    /// The real part of the [`Complex`] number
+    pub real: f64,
+    /// The imaginary part of the [`Complex`] number
+    pub imag: f64,
+}
+
+impl Complex {
+    pub const ZERO: Self = Self::new(0.0, 0.0);
+    pub const ONE: Self = Self::new(1.0, 0.0);
+    pub const I: Self = Self::new(0.0, 1.0);
+
+    /// Create a new [`Complex`]
+    pub const fn new(real: f64, imag: f64) -> Self {
+        Self { real, imag }
+    }
+
+    /// Create a new [`Complex`] with a given phase: `exp(i * phase)`
+    pub fn cis(phase: f64) -> Self {
+        Self::new(phase.cos(), phase.sin())
+    }
+
+    /// Returns the square of the norm `real^2 + imag^2`
+    pub const fn norm_sqr(&self) -> f64 {
+        self.real * self.real + self.imag * self.imag
+    }
+
+    /// Computes the cosine of [`Complex`]
+    pub fn cos(&self) -> Self {
+        // z = x + iy
+        // cos(z) = cos(x) cosh(y) - i sin(x) sinh(y)
+        // re: cos(re) cosh(im)
+        // im: -sin(re) sinh(im)
+        Self::new(
+            self.real.cos() * self.imag.cosh(),
+            -self.real.sin() * self.imag.sinh(),
+        )
+    }
+
+    /// Returns the complex conjugate, `real - i imag`
+    pub const fn conj(&self) -> Self {
+        Self::new(self.real, -self.imag)
+    }
+
+    pub fn powi(&self, exp: i32) -> Self {
+        (0..exp).fold(Self::ONE, |acc, _| acc * *self)
+    }
+}
+
+// num-traits
+
+impl Zero for Complex {
+    fn zero() -> Self {
+        Self::ZERO
+    }
+    fn is_zero(&self) -> bool {
+        self.real == 0.0 && self.imag == 0.0
+    }
+}
+
+impl One for Complex {
+    fn one() -> Self {
+        Self::ONE
+    }
+}
+
+// std::ops
+
+impl Neg for Complex {
+    type Output = Self;
+    fn neg(self) -> Self::Output {
+        Self::new(-self.real, -self.imag)
+    }
+}
+
+impl Add for Complex {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self::new(self.real + rhs.real, self.imag + rhs.imag)
+    }
+}
+
+impl Mul<f64> for Complex {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self::new(self.real * rhs, self.imag * rhs)
+    }
+}
+
+impl Mul for Complex {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        // z1 = x1 + i y1
+        // z2 = x2 + i y2
+        // z1 * z2 = (x1 + i y1)(x2 + i y2)
+        //         = x1 x2 + i x1 y2 + i y1 x2 - y1 y2
+        //         = (x1 x2 - y1 y2) + i (x1 y2 + y1 x2)
+        Self::new(
+            self.real * rhs.real - self.imag * rhs.imag,
+            self.real * rhs.imag + self.imag * rhs.real,
+        )
+    }
+}
+
+impl Sub for Complex {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self::new(self.real - rhs.real, self.imag - rhs.imag)
+    }
+}
+
+impl Div for Complex {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        // z1 = x1 + i y1
+        // z2 = x2 + i y2
+        // z1 / z2 = (x1 + i y1)/(x2 + i y2)
+        //         = (x1 + i y1)(x2 - i y2)/(x2 + i y2)(x2 - i y2)
+        //         = z1 z2^* / |z2|^2
+        self * rhs.conj() / rhs.norm_sqr()
+    }
+}
+
+impl Div<f64> for Complex {
+    type Output = Self;
+    fn div(self, rhs: f64) -> Self::Output {
+        Self::new(self.real / rhs, self.imag / rhs)
+    }
+}

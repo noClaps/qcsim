@@ -102,7 +102,7 @@ version = "0.1.0"
 dependencies = [
  "fastrand",
  "ndarray",
- "num-complex",
+ "num-traits",
  "unicode-plot",
 ]
 

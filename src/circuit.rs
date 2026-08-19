@@ -1,11 +1,10 @@
 use ndarray::{Array1, Array2};
-use num_complex::{Complex64, c64};
 
-use crate::qubits::Qubits;
+use crate::{Complex, cmplx, qubits::Qubits};
 
 #[derive(Clone)]
 pub struct QuantumCircuit {
-    pub qubits: Array1<Complex64>,
+    pub qubits: Array1<Complex>,
     pub num_qubits: usize,
 }
 
@@ -13,7 +12,7 @@ impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     pub fn new(num_qubits: usize) -> Self {
         let mut qubits = Array1::zeros(1 << num_qubits);
-        qubits[0] = c64(1, 0);
+        qubits[0] = cmplx!(1);
         Self { qubits, num_qubits }
     }
 
@@ -33,11 +32,11 @@ impl QuantumCircuit {
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
         self.qubits = Array1::zeros(1 << self.num_qubits);
-        self.qubits[0] = c64(1, 0);
+        self.qubits[0] = cmplx!(1);
     }
 
     /// Apply unitary `gate` to `qubits`
-    pub fn unitary(&mut self, gate: &Array2<Complex64>, qubits: impl Into<Qubits>) {
+    pub fn unitary(&mut self, gate: &Array2<Complex>, qubits: impl Into<Qubits>) {
         let qubits = match qubits.into() {
             Qubits::Single(q) => vec![q],
             Qubits::Array(qs) => qs,

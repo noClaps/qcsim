@@ -1,7 +1,6 @@
 use ndarray::array;
-use num_complex::c64;
 
-use crate::QuantumCircuit;
+use crate::{QuantumCircuit, cmplx};
 
 /// 2 qubit gates
 impl QuantumCircuit {
@@ -81,10 +80,10 @@ impl QuantumCircuit {
     /// Controlled-X gate.
     pub fn cx(&mut self, q0: usize, q1: usize) {
         let mat = array![
-            [c64(1, 0), c64(0, 0), c64(0, 0), c64(0, 0)],
-            [c64(0, 0), c64(1, 0), c64(0, 0), c64(0, 0)],
-            [c64(0, 0), c64(0, 0), c64(0, 0), c64(1, 0)],
-            [c64(0, 0), c64(0, 0), c64(1, 0), c64(0, 0)],
+            [cmplx!(1), cmplx!(0), cmplx!(0), cmplx!(0)],
+            [cmplx!(0), cmplx!(1), cmplx!(0), cmplx!(0)],
+            [cmplx!(0), cmplx!(0), cmplx!(0), cmplx!(1)],
+            [cmplx!(0), cmplx!(0), cmplx!(1), cmplx!(0)],
         ];
         self.unitary(&mat, &[q0, q1]);
     }

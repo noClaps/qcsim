@@ -1,8 +1,7 @@
 use std::{f64::consts::PI, io::stdout};
 
 use ndarray::{Array1, Array2};
-use num_complex::{Complex64, c64};
-use qcsim::{QuantumCircuit, sample};
+use qcsim::{Complex, QuantumCircuit, cmplx, sample};
 use unicode_plot::barplot;
 
 fn main() {
@@ -14,11 +13,11 @@ fn main() {
     let check = |x: u32| x == secret_val as u32;
 
     let u_omega = Array2::from_diag(
-        &Array1::from_iter(0..1 << num_qubits).map(|&i| c64(-1, 0).powu(check(i) as u32)),
+        &Array1::from_iter(0..1 << num_qubits).map(|&i| cmplx!(-1).powi(check(i) as i32)),
     );
     let mut u_s = Array2::zeros((1 << num_qubits, 1 << num_qubits));
-    u_s[(0, 0)] = c64(1, 0);
-    u_s = u_s * 2.0 - Array2::<Complex64>::eye(1 << num_qubits);
+    u_s[(0, 0)] = cmplx!(1, 0);
+    u_s = u_s * 2.0 - Array2::<Complex>::eye(1 << num_qubits);
 
     let mut qc = QuantumCircuit::new(num_qubits);
     qc.h(0..num_qubits);
