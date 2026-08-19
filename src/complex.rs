@@ -1,6 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
-
-use num_traits::{One, Zero};
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 /// Create a new [`Complex`] number
 #[macro_export]
@@ -73,25 +71,6 @@ impl Complex {
     }
 }
 
-// num-traits
-
-impl Zero for Complex {
-    fn zero() -> Self {
-        Self::ZERO
-    }
-    fn is_zero(&self) -> bool {
-        self.real == 0.0 && self.imag == 0.0
-    }
-}
-
-impl One for Complex {
-    fn one() -> Self {
-        Self::ONE
-    }
-}
-
-// std::ops
-
 impl Neg for Complex {
     type Output = Self;
     fn neg(self) -> Self::Output {
@@ -103,6 +82,13 @@ impl Add for Complex {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Self::new(self.real + rhs.real, self.imag + rhs.imag)
+    }
+}
+
+impl AddAssign for Complex {
+    fn add_assign(&mut self, rhs: Self) {
+        self.real += rhs.real;
+        self.imag += rhs.imag
     }
 }
 

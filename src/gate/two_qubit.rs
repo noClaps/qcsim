@@ -1,6 +1,4 @@
-use ndarray::array;
-
-use crate::{QuantumCircuit, cmplx};
+use crate::{QuantumCircuit, cmplx, matrix};
 
 /// 2 qubit gates
 impl QuantumCircuit {
@@ -79,7 +77,7 @@ impl QuantumCircuit {
     }
     /// Controlled-X gate.
     pub fn cx(&mut self, q0: usize, q1: usize) {
-        let mat = array![
+        let mat = matrix![
             [cmplx!(1), cmplx!(0), cmplx!(0), cmplx!(0)],
             [cmplx!(0), cmplx!(1), cmplx!(0), cmplx!(0)],
             [cmplx!(0), cmplx!(0), cmplx!(0), cmplx!(1)],

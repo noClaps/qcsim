@@ -1,6 +1,4 @@
-use ndarray::{Array1, Array2};
-
-use crate::{Complex, StateVector, cmplx, qubits::Qubits};
+use crate::{Matrix, StateVector, cmplx, qubits::Qubits};
 
 #[derive(Clone)]
 pub struct QuantumCircuit {
@@ -36,7 +34,7 @@ impl QuantumCircuit {
     }
 
     /// Apply unitary `gate` to `qubits`
-    pub fn unitary(&mut self, gate: &Array2<Complex>, qubits: impl Into<Qubits>) {
+    pub fn unitary(&mut self, gate: &Matrix, qubits: impl Into<Qubits>) {
         let qubits = match qubits.into() {
             Qubits::Single(q) => vec![q],
             Qubits::Array(qs) => qs,
@@ -77,7 +75,7 @@ impl QuantumCircuit {
             // create input from qubits at `indices`
             // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
             // where A_000 is the amplitude for qubit |000>
-            let input = Array1::from_iter(indices.iter().map(|&i| self.qubits[i]));
+            let input = StateVector::from_iter(indices.iter().map(|&i| self.qubits[i]));
             // apply gate
             let output = gate.dot(&input);
             // write output back into qubits
