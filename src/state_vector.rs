@@ -19,8 +19,12 @@ impl StateVector {
         self.0.iter()
     }
     /// Get the length of the [`StateVector`]
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.0.len()
+    }
+    /// Check if the [`StateVector`] is empty
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
