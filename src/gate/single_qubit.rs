@@ -1,6 +1,6 @@
 use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, PI};
 
-use crate::{Complex, QuantumCircuit, cmplx, matrix, qubits::Qubits};
+use crate::{Complex, QuantumCircuit, cmplx, gate, qubits::Qubits};
 
 /// Single qubit gates
 impl QuantumCircuit {
@@ -64,7 +64,7 @@ impl QuantumCircuit {
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(&mut self, theta: f64, phi: f64, lam: f64, idx: impl Into<Qubits>) {
-        let mat = matrix![
+        let mat = gate![
             [
                 cmplx!(theta / 2.0).cos(),
                 -Complex::cis(lam) * (theta / 2.0).sin()

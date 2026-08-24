@@ -1,5 +1,6 @@
-use crate::{Matrix, StateVector, cmplx, qubits::Qubits};
+use crate::{Gate, StateVector, cmplx, qubits::Qubits};
 
+/// A quantum circuit
 #[derive(Clone)]
 pub struct QuantumCircuit {
     pub qubits: StateVector,
@@ -34,7 +35,7 @@ impl QuantumCircuit {
     }
 
     /// Apply unitary `gate` to `qubits`
-    pub fn unitary(&mut self, gate: &Matrix, qubits: impl Into<Qubits>) {
+    pub fn unitary(&mut self, gate: &Gate, qubits: impl Into<Qubits>) {
         let qubits = match qubits.into() {
             Qubits::Single(q) => vec![q],
             Qubits::Array(qs) => qs,
@@ -77,7 +78,7 @@ impl QuantumCircuit {
             // where A_000 is the amplitude for qubit |000>
             let input = StateVector::from_iter(indices.iter().map(|&i| self.qubits[i]));
             // apply gate
-            let output = gate.dot(&input);
+            let output = gate.clone() * input;
             // write output back into qubits
             // indices = [000, 001, 100, 101]
             // qubits[indices[n]] = output[n]

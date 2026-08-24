@@ -1,7 +1,6 @@
 mod circuit;
 mod complex;
 mod gate;
-mod matrix;
 mod qubits;
 mod sampler;
 mod state_vector;
@@ -10,6 +9,6 @@ pub mod tests;
 
 pub use circuit::QuantumCircuit;
 pub use complex::Complex;
-pub use matrix::Matrix;
+pub use gate::Gate;
 pub use sampler::sample;
 pub use state_vector::StateVector;

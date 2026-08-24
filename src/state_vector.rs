@@ -5,7 +5,7 @@ use std::{
 
 use crate::Complex;
 
-/// A type representing a state vector
+/// A state vector
 #[derive(Clone)]
 pub struct StateVector(Vec<Complex>);
 

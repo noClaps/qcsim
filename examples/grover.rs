@@ -1,6 +1,6 @@
 use std::{f64::consts::PI, io::stdout};
 
-use qcsim::{Matrix, QuantumCircuit, cmplx, sample};
+use qcsim::{Gate, QuantumCircuit, cmplx, sample};
 use unicode_plot::barplot;
 
 fn main() {
@@ -11,14 +11,14 @@ fn main() {
 
     let check = |x: u32| x == secret_val as u32;
 
-    let u_omega = Matrix::from_diag(
+    let u_omega = Gate::from_diag(
         &(0..1 << num_qubits)
             .map(|i| cmplx!(-1).powi(check(i) as i32))
             .collect::<Vec<_>>(),
     );
-    let mut u_s = Matrix::zeros(1 << num_qubits);
+    let mut u_s = Gate::zeros(1 << num_qubits);
     u_s[(0, 0)] = cmplx!(1, 0);
-    u_s = u_s * 2.0 - Matrix::eye(1 << num_qubits);
+    u_s = u_s * 2.0 - Gate::eye(1 << num_qubits);
 
     let mut qc = QuantumCircuit::new(num_qubits);
     qc.h(0..num_qubits);

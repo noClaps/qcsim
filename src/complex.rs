@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// Create a new [`Complex`] number
 #[macro_export]
@@ -21,7 +21,7 @@ macro_rules! cmplx {
 }
 
 /// A complex number
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Complex {
     /// The real part of the [`Complex`] number
     pub real: f64,
@@ -114,10 +114,23 @@ impl Mul for Complex {
     }
 }
 
+impl MulAssign<f64> for Complex {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.real *= rhs;
+        self.imag *= rhs;
+    }
+}
+
 impl Sub for Complex {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self::new(self.real - rhs.real, self.imag - rhs.imag)
+    }
+}
+impl SubAssign for Complex {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.real -= rhs.real;
+        self.imag -= rhs.imag;
     }
 }
 
