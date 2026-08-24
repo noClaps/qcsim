@@ -1,24 +1,6 @@
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
-/// Create a new [`Complex`] number
-#[macro_export]
-macro_rules! cmplx {
-    (0) => {
-        $crate::Complex::ZERO
-    };
-    (1) => {
-        $crate::Complex::ONE
-    };
-    (i) => {
-        $crate::Complex::I
-    };
-    ($val:expr) => {
-        $crate::Complex::new($val.into(), 0.0)
-    };
-    ($re:expr, $im:expr) => {
-        $crate::Complex::new($re.into(), $im.into())
-    };
-}
+pub(crate) const I: Complex = Complex::I;
 
 /// A complex number
 #[derive(Clone, Copy, PartialEq)]
@@ -114,6 +96,12 @@ impl Mul for Complex {
     }
 }
 
+impl MulAssign for Complex {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.real = self.real * rhs.real - self.imag * rhs.imag;
+        self.imag = self.real * rhs.imag + self.imag * rhs.real;
+    }
+}
 impl MulAssign<f64> for Complex {
     fn mul_assign(&mut self, rhs: f64) {
         self.real *= rhs;
@@ -150,5 +138,14 @@ impl Div<f64> for Complex {
     type Output = Self;
     fn div(self, rhs: f64) -> Self::Output {
         Self::new(self.real / rhs, self.imag / rhs)
+    }
+}
+
+impl<T> From<T> for Complex
+where
+    T: Into<f64>,
+{
+    fn from(value: T) -> Self {
+        Self::new(value.into(), 0.0)
     }
 }

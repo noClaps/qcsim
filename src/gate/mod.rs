@@ -4,7 +4,7 @@ mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
-use std::ops::{Index, IndexMut, Mul, Sub};
+use std::ops::{Add, Index, IndexMut, Mul, Sub};
 
 use crate::{Complex, StateVector};
 
@@ -20,7 +20,7 @@ pub struct Gate {
 macro_rules! gate {
     ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
         $crate::Gate::from(vec![
-            $(vec![$($el,)+],)+
+            $(vec![$($crate::Complex::from($el),)+],)+
         ])
     };
 }
@@ -50,6 +50,22 @@ impl Gate {
     pub fn adjoint(&self) -> Self {
         self.transpose().conjugate()
     }
+    /// Create a unitary [`Gate`]
+    pub fn unitary(value: Vec<Vec<Complex>>) -> Self {
+        let gate = Self::from(value);
+        assert!(gate.is_unitary(), "Gate is not unitary");
+        gate
+    }
+    /// Find the Kronecker product between [`self`] and `rhs`.
+    /// Also known as the tensor product
+    #[doc(alias = "tensor")]
+    pub fn kron(&self, rhs: &Self) -> Self {
+        let mut out = vec![];
+        for &el in &self.elements {
+            out.push((rhs.clone() * el).elements);
+        }
+        Gate::from(out.into_iter().flatten().collect::<Vec<_>>())
+    }
 
     fn transpose(&self) -> Self {
         let mut out = Gate::zeros(self.size);
@@ -67,23 +83,32 @@ impl Gate {
     }
     fn is_unitary(&self) -> bool {
         let eye = Gate::eye(self.size);
-        let mat = self.clone();
-        mat.transpose().conjugate() * mat == eye
+        let gate = self.clone();
+        gate.transpose().conjugate() * gate == eye
     }
 }
 
 impl From<Vec<Vec<Complex>>> for Gate {
     fn from(value: Vec<Vec<Complex>>) -> Self {
-        if !value.iter().all(|row| value.len() == row.len()) {
-            panic!("Matrix is not square")
-        }
+        assert!(
+            value.iter().all(|row| value.len() == row.len()),
+            "Gate matrix is not square"
+        );
         let size = value.len();
         let elements = value.into_iter().flatten().collect();
-        let mat = Self { elements, size };
-        if !mat.is_unitary() {
-            panic!("Matrix is not unitary")
-        }
-        mat
+        let gate = Self { elements, size };
+        gate
+    }
+}
+impl From<Vec<Complex>> for Gate {
+    fn from(value: Vec<Complex>) -> Self {
+        let size = value.len().isqrt();
+        assert_eq!(size * size, value.len(), "Gate matrix is not square");
+        let gate = Self {
+            elements: value,
+            size,
+        };
+        gate
     }
 }
 
@@ -113,6 +138,14 @@ impl IndexMut<usize> for Gate {
 impl Mul<f64> for Gate {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
+        let mut out = self.clone();
+        out.elements.iter_mut().for_each(|el| *el *= rhs);
+        out
+    }
+}
+impl Mul<Complex> for Gate {
+    type Output = Self;
+    fn mul(self, rhs: Complex) -> Self::Output {
         let mut out = self.clone();
         out.elements.iter_mut().for_each(|el| *el *= rhs);
         out
@@ -165,6 +198,18 @@ impl Sub for Gate {
             .iter_mut()
             .enumerate()
             .for_each(|(i, el)| *el -= rhs[i]);
+        out
+    }
+}
+
+impl Add for Gate {
+    type Output = Gate;
+    fn add(self, rhs: Self) -> Self::Output {
+        let mut out = self.clone();
+        out.elements
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, el)| *el += rhs[i]);
         out
     }
 }
