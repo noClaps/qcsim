@@ -96,19 +96,17 @@ impl From<Vec<Vec<Complex>>> for Gate {
         );
         let size = value.len();
         let elements = value.into_iter().flatten().collect();
-        let gate = Self { elements, size };
-        gate
+        Self { elements, size }
     }
 }
 impl From<Vec<Complex>> for Gate {
     fn from(value: Vec<Complex>) -> Self {
         let size = value.len().isqrt();
         assert_eq!(size * size, value.len(), "Gate matrix is not square");
-        let gate = Self {
+        Self {
             elements: value,
             size,
-        };
-        gate
+        }
     }
 }
 
@@ -162,10 +160,8 @@ impl Mul for Gate {
         for _ in 0..self.size {
             let mut b = 0;
             for _ in 0..self.size {
-                let mut c = cc;
-                for _ in 0..self.size {
+                for c in (cc..).take(self.size) {
                     out[c] += self[a] * rhs[b];
-                    c += 1;
                     b += 1;
                 }
                 a += 1;
