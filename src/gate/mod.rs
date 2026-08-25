@@ -9,7 +9,7 @@ use std::ops::{Add, Index, IndexMut, Mul, Sub};
 use crate::{Complex, StateVector};
 
 /// A quantum gate
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Gate {
     elements: Vec<Complex>,
     size: usize,

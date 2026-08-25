@@ -3,7 +3,7 @@ use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 pub(crate) const I: Complex = Complex::I;
 
 /// A complex number
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Complex {
     /// The real part of the [`Complex`] number
     pub real: f64,
