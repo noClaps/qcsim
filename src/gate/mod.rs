@@ -60,11 +60,17 @@ impl Gate {
     /// Also known as the tensor product
     #[doc(alias = "tensor")]
     pub fn kron(&self, rhs: &Self) -> Self {
-        let mut out = vec![];
-        for &el in &self.elements {
-            out.push((rhs.clone() * el).elements);
+        let mut out = Gate::zeros(self.size * rhs.size);
+        for i in 0..self.size {
+            for j in 0..self.size {
+                for p in 0..rhs.size {
+                    for q in 0..rhs.size {
+                        out[(i * rhs.size + p, j * rhs.size + q)] = self[(i, j)] * rhs[(p, q)]
+                    }
+                }
+            }
         }
-        Gate::from(out.into_iter().flatten().collect::<Vec<_>>())
+        out
     }
 
     fn transpose(&self) -> Self {
