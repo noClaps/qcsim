@@ -1,4 +1,4 @@
-use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
+use std::f64::consts::FRAC_1_SQRT_2;
 
 use crate::{Complex, Gate, complex::I, gate};
 
@@ -6,44 +6,44 @@ use crate::{Complex, Gate, complex::I, gate};
 impl Gate {
     /// Controlled-Hadamard gate.
     pub fn ch() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::h().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::h())
     }
     /// Controlled-Phase gate.
     pub fn cp(theta: f64) -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::p(theta).kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::p(theta))
     }
     /// Controlled-RX gate.
     pub fn crx(theta: f64) -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::rx(theta).kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::rx(theta))
     }
     /// Controlled-RY gate.
     pub fn cry(theta: f64) -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::ry(theta).kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::ry(theta))
     }
     /// Controlled-RZ gate.
     pub fn crz(theta: f64) -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::rz(theta).kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::rz(theta))
     }
     /// Controlled-S gate.
     pub fn cs() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::s().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::s())
     }
     /// Controlled-S† gate.
     pub fn csdg() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::sdg().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::sdg())
     }
     /// Controlled-√X gate.
     pub fn csx() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::sx().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::sx())
     }
     /// Controlled-U gate (4-parameter two-qubit gate).
     pub fn cu(theta: f64, phi: f64, lam: f64, gamma: f64) -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]])
-            + (Self::u(theta, phi, lam).kron(&gate![[0, 0], [0, 1]]) * Complex::cis(gamma))
+        gate![[1, 0], [0, 0]].kron(&Self::i())
+            + (gate![[0, 0], [0, 1]].kron(&Self::u(theta, phi, lam)) * Complex::cis(gamma))
     }
     /// Controlled-X gate.
     pub fn cx() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::x().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::x())
     }
     /// Controlled-X gate.
     pub fn cnot() -> Self {
@@ -51,11 +51,11 @@ impl Gate {
     }
     /// Controlled-Y gate.
     pub fn cy() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::y().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::y())
     }
     /// Controlled-Z gate.
     pub fn cz() -> Self {
-        Self::i().kron(&gate![[1, 0], [0, 0]]) + Self::z().kron(&gate![[0, 0], [0, 1]])
+        gate![[1, 0], [0, 0]].kron(&Self::i()) + gate![[0, 0], [0, 1]].kron(&Self::z())
     }
     /// Double-CX gate.
     pub fn dcx() -> Self {
@@ -63,11 +63,11 @@ impl Gate {
     }
     /// An echoed cross-resonance gate.
     pub fn ecr() -> Self {
-        gate![[0, 1, 0, I], [1, 0, -I, 0], [0, I, 0, 1], [-I, 0, 1, 0],] * FRAC_1_SQRT_2
+        gate![[0, 1, 0, I], [1, 0, -I, 0], [0, I, 0, 1], [-I, 0, 1, 0]] * FRAC_1_SQRT_2
     }
     /// iSWAP gate.
     pub fn iswap() -> Self {
-        (Self::x().kron(&Self::x()) + Self::y().kron(&Self::y())) * Complex::cis(FRAC_PI_4)
+        gate![[1, 0, 0, 0], [0, 0, I, 0], [0, I, 0, 0], [0, 0, 0, 1]]
     }
     /// A parametric 2-qubit X⊗X interaction (rotation about XX).
     pub fn rxx(theta: f64) -> Self {
@@ -124,20 +124,11 @@ impl Gate {
     }
     /// XX+YY interaction gate.
     pub fn xx_plus_yy(theta: f64, beta: f64) -> Self {
+        let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
             [1, 0, 0, 0],
-            [
-                0,
-                (theta / 2.0).cos(),
-                -I * (theta / 2.0).sin() * Complex::cis(-beta),
-                0
-            ],
-            [
-                0,
-                -I * (theta / 2.0).sin() * Complex::cis(beta),
-                (theta / 2.0).cos(),
-                0
-            ],
+            [0, cos, -I * sin * Complex::cis(-beta), 0],
+            [0, -I * sin * Complex::cis(beta), cos, 0],
             [0, 0, 0, 1]
         ]
     }

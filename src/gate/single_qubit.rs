@@ -62,15 +62,10 @@ impl Gate {
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(theta: f64, phi: f64, lam: f64) -> Self {
+        let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
-            [
-                (theta / 2.0).cos(),
-                -Complex::cis(lam) * (theta / 2.0).sin()
-            ],
-            [
-                Complex::cis(phi) * (theta / 2.0).sin(),
-                Complex::cis(phi + lam) * (theta / 2.0).cos()
-            ]
+            [cos, -Complex::cis(lam) * sin],
+            [Complex::cis(phi) * sin, Complex::cis(phi + lam) * cos]
         ]
     }
     /// The single-qubit Pauli-X gate (σ_x).
