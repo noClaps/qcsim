@@ -19,8 +19,8 @@ pub struct Gate {
 #[macro_export]
 macro_rules! gate {
     ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
-        $crate::Gate::from(vec![
-            $(vec![$($crate::Complex::from($el),)+],)+
+        $crate::Gate::from([
+            $($($crate::Complex::from($el),)+)+
         ])
     };
 }
@@ -52,7 +52,13 @@ impl Gate {
     }
     /// Create a unitary [`Gate`]
     pub fn unitary(value: Vec<Vec<Complex>>) -> Self {
-        let gate = Self::from(value);
+        assert!(
+            value.iter().all(|row| value.len() == row.len()),
+            "Gate matrix is not square"
+        );
+        let size = value.len();
+        let elements = value.into_iter().flatten().collect();
+        let gate = Self { elements, size };
         assert!(gate.is_unitary(), "Gate is not unitary");
         gate
     }
@@ -87,26 +93,19 @@ impl Gate {
         out.elements.iter_mut().for_each(|el| *el = el.conj());
         out
     }
-    fn is_unitary(&self) -> bool {
+    pub(crate) fn is_unitary(&self) -> bool {
         let eye = Gate::eye(self.size);
         let gate = self.clone();
         gate.transpose().conjugate() * gate == eye
     }
 }
 
-impl From<Vec<Vec<Complex>>> for Gate {
-    fn from(value: Vec<Vec<Complex>>) -> Self {
-        assert!(
-            value.iter().all(|row| value.len() == row.len()),
-            "Gate matrix is not square"
-        );
-        let size = value.len();
-        let elements = value.into_iter().flatten().collect();
-        Self { elements, size }
-    }
-}
-impl From<Vec<Complex>> for Gate {
-    fn from(value: Vec<Complex>) -> Self {
+impl<T> From<T> for Gate
+where
+    T: Into<Vec<Complex>>,
+{
+    fn from(value: T) -> Self {
+        let value = value.into();
         let size = value.len().isqrt();
         assert_eq!(size * size, value.len(), "Gate matrix is not square");
         Self {
