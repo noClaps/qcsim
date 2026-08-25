@@ -3,7 +3,7 @@ use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 pub(crate) const I: Complex = Complex::I;
 
 /// A complex number
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Complex {
     /// The real part of the [`Complex`] number
     pub real: f64,
@@ -147,5 +147,16 @@ where
 {
     fn from(value: T) -> Self {
         Self::new(value.into(), 0.0)
+    }
+}
+
+impl PartialEq for Complex {
+    fn eq(&self, other: &Self) -> bool {
+        // derived from `numpy.isclose`
+        const RTOL: f64 = 1e-5;
+        const ATOL: f64 = 1e-8;
+        let real_eq = (self.real - other.real).abs() <= (ATOL + RTOL * other.real.abs());
+        let imag_eq = (self.imag - other.imag).abs() <= (ATOL + RTOL * other.imag.abs());
+        real_eq && imag_eq
     }
 }
