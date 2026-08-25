@@ -40,6 +40,7 @@ impl QuantumCircuit {
 
     /// Apply unitary `gate` to `qubits`
     pub fn unitary(&mut self, gate: &Gate, qubits: impl Into<Qubits>) {
+        assert!(gate.is_unitary(), "Gate is not unitary");
         let qubits = match qubits.into() {
             Qubits::Single(q) => vec![q],
             Qubits::Array(qs) => qs,
