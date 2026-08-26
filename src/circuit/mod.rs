@@ -14,7 +14,7 @@ pub struct QuantumCircuit {
 impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     pub fn new(num_qubits: usize) -> Self {
-        let mut qubits = StateVector::zeros(1 << num_qubits);
+        let mut qubits = vec![Complex::ZERO; 1 << num_qubits];
         qubits[0] = Complex::new(1.0, 0.0);
         Self { qubits, num_qubits }
     }
@@ -34,7 +34,7 @@ impl QuantumCircuit {
 
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
-        self.qubits = StateVector::zeros(1 << self.num_qubits);
+        self.qubits = vec![Complex::ZERO; 1 << self.num_qubits];
         self.qubits[0] = Complex::new(1.0, 0.0);
     }
 
@@ -81,7 +81,7 @@ impl QuantumCircuit {
             // create input from qubits at `indices`
             // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
             // where A_000 is the amplitude for qubit |000>
-            let input = StateVector::from_iter(indices.iter().map(|&i| self.qubits[i]));
+            let input = Vec::from_iter(indices.iter().map(|&i| self.qubits[i]));
             // apply gate
             let output = gate.clone() * input;
             // write output back into qubits

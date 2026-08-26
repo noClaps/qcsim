@@ -11,7 +11,7 @@ use crate::{Complex, StateVector};
 /// A quantum gate
 #[derive(Clone, PartialEq, Debug)]
 pub struct Gate {
-    elements: Vec<Complex>,
+    elements: StateVector,
     size: usize,
 }
 
@@ -180,7 +180,7 @@ impl Mul<StateVector> for Gate {
     type Output = StateVector;
     fn mul(self, rhs: StateVector) -> Self::Output {
         assert_eq!(self.size, rhs.len());
-        let mut out = StateVector::zeros(rhs.len());
+        let mut out = vec![Complex::ZERO; rhs.len()];
         for i in 0..self.size {
             for j in 0..self.size {
                 out[i] += self[(i, j)] * rhs[j]
