@@ -213,18 +213,42 @@ impl Gate {
     }
     /// CCX gate, also known as Toffoli gate.
     pub fn ccx() -> Self {
-        Self::i().kron(&Self::i()).kron(&gate![[1, 0], [0, 0]])
-            + Self::cx().kron(&gate![[0, 0], [0, 1]])
+        gate![
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 1, 0],
+        ]
     }
     /// CCZ gate.
     pub fn ccz() -> Self {
-        Self::i().kron(&Self::i()).kron(&gate![[1, 0], [0, 0]])
-            + Self::cz().kron(&gate![[0, 0], [0, 1]])
+        gate![
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, -1],
+        ]
     }
     /// Controlled-SWAP gate, also known as the Fredkin gate.
     pub fn cswap() -> Self {
-        Self::i().kron(&Self::i()).kron(&gate![[1, 0], [0, 0]])
-            + Self::swap().kron(&gate![[0, 0], [0, 1]])
+        gate![
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1],
+        ]
     }
     /// Controlled-SWAP gate, also known as the Fredkin gate.
     pub fn fredkin() -> Self {

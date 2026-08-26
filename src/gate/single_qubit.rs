@@ -1,64 +1,71 @@
-use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, PI};
+use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
 
-use crate::{Complex, Gate, gate};
+use crate::{Complex, Gate, complex::I, gate};
 
 /// Single qubit gates
 impl Gate {
     /// Single-qubit Hadamard gate.
     pub fn h() -> Self {
-        Self::u(FRAC_PI_2, 0.0, PI)
+        gate![[1, 1], [1, -1]] * FRAC_1_SQRT_2
     }
     /// Identity gate.
     pub fn i() -> Self {
         gate![[1, 0], [0, 1]]
     }
     /// Identity gate.
+    #[inline]
     pub fn id() -> Self {
         Self::i()
     }
     /// Single-qubit rotation around the Z axis.
     pub fn p(theta: f64) -> Self {
-        Self::u(0.0, 0.0, theta)
+        gate![[1, 0], [0, Complex::cis(theta)]]
     }
     /// Rotation θ around the cos(ϕ)x+sin(ϕ)y axis.
     pub fn r(theta: f64, phi: f64) -> Self {
-        Self::u(theta, -FRAC_PI_2 + phi, FRAC_PI_2 - phi)
+        let (sin, cos) = (theta / 2.0).sin_cos();
+        gate![
+            [cos, -I * Complex::cis(-phi) * sin],
+            [-I * Complex::cis(phi) * sin, cos],
+        ]
     }
     /// Single-qubit rotation about the X axis.
     pub fn rx(theta: f64) -> Self {
-        Self::r(theta, 0.0)
+        let (sin, cos) = (theta / 2.0).sin_cos();
+        gate![[cos, -I * sin], [-I * sin, cos]]
     }
     /// Single-qubit rotation about the Y axis.
     pub fn ry(theta: f64) -> Self {
-        Self::r(theta, FRAC_PI_2)
+        let (sin, cos) = (theta / 2.0).sin_cos();
+        gate![[cos, -sin], [sin, cos]]
     }
     /// Single-qubit rotation about the Z axis.
     pub fn rz(phi: f64) -> Self {
-        Self::p(phi)
+        gate![[Complex::cis(-phi / 2.0), 0], [0, Complex::cis(phi / 2.0)]]
     }
     /// Single qubit S gate (√Z).
     pub fn s() -> Self {
-        Self::p(FRAC_PI_2)
+        gate![[1, 0], [0, I]]
     }
     /// Single qubit S-adjoint gate (S†).
     pub fn sdg() -> Self {
-        Self::p(-FRAC_PI_2)
+        gate![[1, 0], [0, -I]]
     }
     /// The single-qubit Sqrt(X) gate (√X).
     pub fn sx() -> Self {
-        Self::sdg() * Self::h() * Self::sdg()
+        gate![[I + 1, -I + 1], [-I + 1, I + 1]] * 0.5
     }
     /// The inverse single-qubit Sqrt(X) gate.
     pub fn sxdg() -> Self {
-        Self::s() * Self::h() * Self::s()
+        gate![[-I + 1, I + 1], [I + 1, -I + 1]] * 0.5
     }
     /// Single qubit T gate (∜Z).
     pub fn t() -> Self {
-        Self::p(FRAC_PI_4)
+        gate![[1, 0], [0, Complex::cis(FRAC_PI_4)]]
     }
     /// Single qubit T-adjoint gate (T†).
     pub fn tdg() -> Self {
-        Self::p(-FRAC_PI_4)
+        gate![[1, 0], [0, Complex::cis(-FRAC_PI_4)]]
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(theta: f64, phi: f64, lam: f64) -> Self {
@@ -70,14 +77,14 @@ impl Gate {
     }
     /// The single-qubit Pauli-X gate (σ_x).
     pub fn x() -> Self {
-        Self::u(PI, 0.0, PI)
+        gate![[0, 1], [1, 0]]
     }
     /// The single-qubit Pauli-Y gate (σ_y).
     pub fn y() -> Self {
-        Self::u(PI, FRAC_PI_2, FRAC_PI_2)
+        gate![[0, -I], [I, 0]]
     }
     /// The single-qubit Pauli-Z gate (σ_z).
     pub fn z() -> Self {
-        Self::p(PI)
+        gate![[1, 0], [0, -1]]
     }
 }

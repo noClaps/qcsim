@@ -69,6 +69,15 @@ impl Add for Complex {
         Self::new(self.real + rhs.real, self.imag + rhs.imag)
     }
 }
+impl<T: Into<f64>> Add<T> for Complex {
+    type Output = Self;
+    fn add(self, rhs: T) -> Self::Output {
+        Self {
+            real: self.real + rhs.into(),
+            imag: self.imag,
+        }
+    }
+}
 
 impl AddAssign for Complex {
     fn add_assign(&mut self, rhs: Self) {
