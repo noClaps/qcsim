@@ -1,4 +1,7 @@
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::{
+    fmt::Display,
+    ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign},
+};
 
 pub(crate) const I: Complex = Complex::I;
 
@@ -158,5 +161,16 @@ impl PartialEq for Complex {
         let real_eq = (self.real - other.real).abs() <= (ATOL + RTOL * other.real.abs());
         let imag_eq = (self.imag - other.imag).abs() <= (ATOL + RTOL * other.imag.abs());
         real_eq && imag_eq
+    }
+}
+
+impl Display for Complex {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Complex { real, imag: 0.0 } => write!(f, "{real}"),
+            Complex { real: 0.0, imag } => write!(f, "{imag}i"),
+            Complex { real, imag } if imag < &0.0 => write!(f, "{real}-{}i", -imag),
+            Complex { real, imag } => write!(f, "{real}+{imag}i"),
+        }
     }
 }

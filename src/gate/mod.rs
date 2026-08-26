@@ -4,7 +4,10 @@ mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
-use std::ops::{Add, Index, IndexMut, Mul, Sub};
+use std::{
+    fmt::Display,
+    ops::{Add, Index, IndexMut, Mul, Sub},
+};
 
 use crate::{Complex, StateVector};
 
@@ -212,5 +215,25 @@ impl Add for Gate {
             .enumerate()
             .for_each(|(i, el)| *el += rhs[i]);
         out
+    }
+}
+
+impl Display for Gate {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+        for i in 0..self.size {
+            if i > 0 {
+                write!(f, ",\n ")?;
+            }
+            write!(f, "[")?;
+            for j in 0..self.size {
+                if j > 0 {
+                    write!(f, ", ")?;
+                }
+                write!(f, "{}", self[(i, j)])?;
+            }
+            write!(f, "]")?;
+        }
+        write!(f, "]")
     }
 }
