@@ -1,3 +1,4 @@
+mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
