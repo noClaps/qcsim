@@ -1,6 +1,6 @@
 # Quantum Computer Simulation
 
-This is a quantum computer simulation research project. It's probably not accurate to a real quantum computer.
+This is a quantum computer simulation research project.
 
 ## Usage
 
