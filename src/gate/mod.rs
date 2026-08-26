@@ -62,7 +62,7 @@ impl Gate {
         assert!(gate.is_unitary(), "Gate is not unitary");
         gate
     }
-    /// Find the Kronecker product between [`self`] and `rhs`.
+    /// Find the Kronecker product between `self` and `rhs`.
     /// Also known as the tensor product
     #[doc(alias = "tensor")]
     pub fn kron(&self, rhs: &Self) -> Self {
