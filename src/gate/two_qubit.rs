@@ -1,6 +1,10 @@
 use std::f64::consts::FRAC_1_SQRT_2;
 
-use crate::{Complex, Gate, complex::I, gate};
+use crate::{
+    Gate,
+    complex::{I, cis},
+    gate,
+};
 
 /// 2 qubit gates
 impl Gate {
@@ -19,7 +23,7 @@ impl Gate {
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
-            [0, 0, 0, Complex::cis(theta)]
+            [0, 0, 0, cis(theta)]
         ]
     }
     /// Controlled-RX gate.
@@ -46,9 +50,9 @@ impl Gate {
     pub fn crz(theta: f64) -> Self {
         gate![
             [1, 0, 0, 0],
-            [0, Complex::cis(-theta / 2.0), 0, 0],
+            [0, cis(-theta / 2.0), 0, 0],
             [0, 0, 1, 0],
-            [0, 0, 0, Complex::cis(theta / 2.0)]
+            [0, 0, 0, cis(theta / 2.0)]
         ]
     }
     /// Controlled-S gate.
@@ -70,19 +74,9 @@ impl Gate {
         let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
             [1, 0, 0, 0],
-            [
-                0,
-                Complex::cis(gamma) * cos,
-                0,
-                -Complex::cis(gamma + lam) * sin
-            ],
+            [0, cis(gamma) * cos, 0, -cis(gamma + lam) * sin],
             [0, 0, 1, 0],
-            [
-                0,
-                Complex::cis(gamma + phi) * sin,
-                0,
-                Complex::cis(gamma + phi + lam) * sin
-            ]
+            [0, cis(gamma + phi) * sin, 0, cis(gamma + phi + lam) * sin]
         ]
     }
     /// Controlled-X gate.
@@ -146,10 +140,10 @@ impl Gate {
     /// A parametric 2-qubit Z⊗Z interaction (rotation about ZZ).
     pub fn rzz(theta: f64) -> Self {
         gate![
-            [Complex::cis(-theta / 2.0), 0, 0, 0],
-            [0, Complex::cis(theta / 2.0), 0, 0],
-            [0, 0, Complex::cis(theta / 2.0), 0],
-            [0, 0, 0, Complex::cis(-theta / 2.0)]
+            [cis(-theta / 2.0), 0, 0, 0],
+            [0, cis(theta / 2.0), 0, 0],
+            [0, 0, cis(theta / 2.0), 0],
+            [0, 0, 0, cis(-theta / 2.0)]
         ]
     }
     /// The SWAP gate.
@@ -160,10 +154,10 @@ impl Gate {
     pub fn xx_minus_yy(theta: f64, beta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
-            [cos, 0, 0, -I * sin * Complex::cis(-beta)],
+            [cos, 0, 0, -I * sin * cis(-beta)],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
-            [-I * sin * Complex::cis(beta), 0, 0, cos]
+            [-I * sin * cis(beta), 0, 0, cos]
         ]
     }
     /// XX+YY interaction gate.
@@ -171,8 +165,8 @@ impl Gate {
         let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
             [1, 0, 0, 0],
-            [0, cos, -I * sin * Complex::cis(-beta), 0],
-            [0, -I * sin * Complex::cis(beta), cos, 0],
+            [0, cos, -I * sin * cis(-beta), 0],
+            [0, -I * sin * cis(beta), cos, 0],
             [0, 0, 0, 1]
         ]
     }

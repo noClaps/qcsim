@@ -1,6 +1,10 @@
 use std::f64::consts::{FRAC_1_SQRT_2, FRAC_PI_4};
 
-use crate::{Complex, Gate, complex::I, gate};
+use crate::{
+    Gate,
+    complex::{I, cis},
+    gate,
+};
 
 /// Single qubit gates
 impl Gate {
@@ -19,15 +23,12 @@ impl Gate {
     }
     /// Single-qubit rotation around the Z axis.
     pub fn p(theta: f64) -> Self {
-        gate![[1, 0], [0, Complex::cis(theta)]]
+        gate![[1, 0], [0, cis(theta)]]
     }
     /// Rotation θ around the cos(ϕ)x+sin(ϕ)y axis.
     pub fn r(theta: f64, phi: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [cos, -I * Complex::cis(-phi) * sin],
-            [-I * Complex::cis(phi) * sin, cos],
-        ]
+        gate![[cos, -I * cis(-phi) * sin], [-I * cis(phi) * sin, cos],]
     }
     /// Single-qubit rotation about the X axis.
     pub fn rx(theta: f64) -> Self {
@@ -41,7 +42,7 @@ impl Gate {
     }
     /// Single-qubit rotation about the Z axis.
     pub fn rz(phi: f64) -> Self {
-        gate![[Complex::cis(-phi / 2.0), 0], [0, Complex::cis(phi / 2.0)]]
+        gate![[cis(-phi / 2.0), 0], [0, cis(phi / 2.0)]]
     }
     /// Single qubit S gate (√Z).
     pub fn s() -> Self {
@@ -61,18 +62,18 @@ impl Gate {
     }
     /// Single qubit T gate (∜Z).
     pub fn t() -> Self {
-        gate![[1, 0], [0, Complex::cis(FRAC_PI_4)]]
+        gate![[1, 0], [0, cis(FRAC_PI_4)]]
     }
     /// Single qubit T-adjoint gate (T†).
     pub fn tdg() -> Self {
-        gate![[1, 0], [0, Complex::cis(-FRAC_PI_4)]]
+        gate![[1, 0], [0, cis(-FRAC_PI_4)]]
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(theta: f64, phi: f64, lam: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
         gate![
-            [cos, -Complex::cis(lam) * sin],
-            [Complex::cis(phi) * sin, Complex::cis(phi + lam) * cos]
+            [cos, -cis(lam) * sin],
+            [cis(phi) * sin, cis(phi + lam) * cos]
         ]
     }
     /// The single-qubit Pauli-X gate (σ_x).

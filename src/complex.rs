@@ -4,6 +4,9 @@ use std::{
 };
 
 pub(crate) const I: Complex = Complex::I;
+pub(crate) fn cis(phase: f64) -> Complex {
+    Complex::cis(phase)
+}
 
 /// A complex number
 #[derive(Clone, Copy, Debug)]
