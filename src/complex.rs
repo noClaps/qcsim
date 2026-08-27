@@ -66,39 +66,26 @@ impl Neg for Complex {
     }
 }
 
-impl Add for Complex {
+impl<T: Into<Complex>> Add<T> for Complex {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self::Output {
+    fn add(self, rhs: T) -> Self::Output {
+        let rhs = rhs.into();
         Self::new(self.real + rhs.real, self.imag + rhs.imag)
     }
 }
-impl<T: Into<f64>> Add<T> for Complex {
-    type Output = Self;
-    fn add(self, rhs: T) -> Self::Output {
-        Self {
-            real: self.real + rhs.into(),
-            imag: self.imag,
-        }
-    }
-}
 
-impl AddAssign for Complex {
-    fn add_assign(&mut self, rhs: Self) {
+impl<T: Into<Complex>> AddAssign<T> for Complex {
+    fn add_assign(&mut self, rhs: T) {
+        let rhs = rhs.into();
         self.real += rhs.real;
         self.imag += rhs.imag
     }
 }
 
-impl Mul<f64> for Complex {
+impl<T: Into<Complex>> Mul<T> for Complex {
     type Output = Self;
-    fn mul(self, rhs: f64) -> Self::Output {
-        Self::new(self.real * rhs, self.imag * rhs)
-    }
-}
-
-impl Mul for Complex {
-    type Output = Self;
-    fn mul(self, rhs: Self) -> Self::Output {
+    fn mul(self, rhs: T) -> Self::Output {
+        let rhs = rhs.into();
         // z1 = x1 + i y1
         // z2 = x2 + i y2
         // z1 * z2 = (x1 + i y1)(x2 + i y2)
@@ -111,55 +98,45 @@ impl Mul for Complex {
     }
 }
 
-impl MulAssign for Complex {
-    fn mul_assign(&mut self, rhs: Self) {
+impl<T: Into<Complex>> MulAssign<T> for Complex {
+    fn mul_assign(&mut self, rhs: T) {
+        let rhs = rhs.into();
         self.real = self.real * rhs.real - self.imag * rhs.imag;
         self.imag = self.real * rhs.imag + self.imag * rhs.real;
     }
 }
-impl MulAssign<f64> for Complex {
-    fn mul_assign(&mut self, rhs: f64) {
-        self.real *= rhs;
-        self.imag *= rhs;
-    }
-}
 
-impl Sub for Complex {
+impl<T: Into<Complex>> Sub<T> for Complex {
     type Output = Self;
-    fn sub(self, rhs: Self) -> Self::Output {
+    fn sub(self, rhs: T) -> Self::Output {
+        let rhs = rhs.into();
         Self::new(self.real - rhs.real, self.imag - rhs.imag)
     }
 }
-impl SubAssign for Complex {
-    fn sub_assign(&mut self, rhs: Self) {
+impl<T: Into<Complex>> SubAssign<T> for Complex {
+    fn sub_assign(&mut self, rhs: T) {
+        let rhs = rhs.into();
         self.real -= rhs.real;
         self.imag -= rhs.imag;
     }
 }
 
-impl Div for Complex {
+impl<T: Into<Complex>> Div<T> for Complex {
     type Output = Self;
-    fn div(self, rhs: Self) -> Self::Output {
+    fn div(self, rhs: T) -> Self::Output {
+        let rhs = rhs.into();
         // z1 = x1 + i y1
         // z2 = x2 + i y2
         // z1 / z2 = (x1 + i y1)/(x2 + i y2)
         //         = (x1 + i y1)(x2 - i y2)/(x2 + i y2)(x2 - i y2)
         //         = z1 z2^* / |z2|^2
-        self * rhs.conj() / rhs.norm_sqr()
+        let num = self * rhs.conj();
+        let den = rhs.norm_sqr();
+        Self::new(num.real / den, num.imag / den)
     }
 }
 
-impl Div<f64> for Complex {
-    type Output = Self;
-    fn div(self, rhs: f64) -> Self::Output {
-        Self::new(self.real / rhs, self.imag / rhs)
-    }
-}
-
-impl<T> From<T> for Complex
-where
-    T: Into<f64>,
-{
+impl<T: Into<f64>> From<T> for Complex {
     fn from(value: T) -> Self {
         Self::new(value.into(), 0.0)
     }
