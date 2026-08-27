@@ -4,19 +4,17 @@ use qcsim::{Complex, Gate, QuantumCircuit, sample};
 use unicode_plot::barplot;
 
 fn main() {
-    let secret_val = *b"a";
-    type T = u8;
+    let secret_val = 2047;
+    let check = |x: usize| secret_val == x;
 
-    let num_qubits = size_of_val(&secret_val) * 8;
+    let num_qubits = (secret_val.ilog2() + 1) as usize;
     println!("num qubits: {num_qubits}");
     let iterations = (PI / 4.0 * (num_qubits as f64).sqrt()).ceil() as usize;
     println!("iterations: {iterations}");
 
-    let check = |x: T| x.to_be_bytes() == secret_val;
-
     let u_omega = Gate::from_diag(
         &(0..1 << num_qubits)
-            .map(|i| Complex::new(-1.0, 0.0).powi(check(i as T) as i32))
+            .map(|i| Complex::new(-1.0, 0.0).powi(check(i) as i32))
             .collect::<Vec<_>>(),
     );
     let mut u_s = Gate::zeros(1 << num_qubits);
@@ -34,12 +32,9 @@ fn main() {
 
     let data = sample(qc, 10000);
     let &val = data.iter().max_by_key(|el| el.1).unwrap().0;
-    let val = val as T;
     assert!(
         check(val),
-        "Grover's algorithm failed! Expected: {}, received: {:?}",
-        String::from_utf8_lossy(&secret_val),
-        String::from_utf8_lossy(&val.to_be_bytes())
+        "Grover's algorithm failed! Expected: {secret_val}, received: {val}",
     );
 
     let plot = barplot(
@@ -50,5 +45,5 @@ fn main() {
     .unwrap();
     plot.render_with_mode_auto(&mut stdout(), Default::default())
         .unwrap();
-    println!("val: {}", String::from_utf8_lossy(&val.to_be_bytes()));
+    println!("val: {val}");
 }
