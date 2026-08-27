@@ -5,8 +5,7 @@ mod two_qubit;
 /// Checks if the output contains only the provided keys. Panics if any other keys are present.
 macro_rules! assert_output {
     ($output:expr, $($el:literal),* $(,)?) => {
-        let keys = [$($el,)*];
-        assert!($output.keys().all(|k| keys.contains(k)), "Expected: {:?}\nFound: {:?}", keys, $output);
+        assert!($output.keys().all(|k| [$($el,)*].contains(k)), "Expected: {:?}\nFound: {:?}", [$($el,)*], $output)
     };
 }
 pub(crate) use assert_output;
