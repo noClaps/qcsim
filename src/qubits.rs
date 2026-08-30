@@ -1,6 +1,5 @@
 use std::ops::Range;
 
-#[derive(Clone)]
 pub enum Qubits {
     Single(usize),
     Array(Vec<usize>),
