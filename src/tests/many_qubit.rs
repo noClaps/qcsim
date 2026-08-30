@@ -9,3 +9,18 @@ fn ccx() {
     let output = sample(qc, 10000);
     assert_output!(output, 0b010, 0b111);
 }
+
+#[test]
+fn rc3x() {
+    let mut qc = QuantumCircuit::new(4); // |0000>
+    qc.x(0..3); // |1110>
+    qc.rcccx(0, 1, 2, 3); // |1111>
+    let output = sample(qc, 10000);
+    assert_output!(output, 0b1111);
+
+    let mut qc = QuantumCircuit::new(4); // |0000>
+    qc.x(0..2); // |1100>
+    qc.rcccx(0, 1, 2, 3); // |1100>
+    let output = sample(qc, 10000);
+    assert_output!(output, 0b1100);
+}
