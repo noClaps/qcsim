@@ -47,9 +47,15 @@ impl QuantumCircuit {
 
         assert_eq!(
             qubits.len(),
-            gate.size.ilog2() as usize,
+            match gate {
+                Gate::Normal(matrix) => matrix.nrows().ilog2(),
+                Gate::Diagonal(matrix) => matrix.len().ilog2(),
+            } as usize,
             "Cannot apply {} qubit gate to {} qubit(s)",
-            gate.size.ilog2(),
+            match gate {
+                Gate::Normal(matrix) => matrix.nrows().ilog2(),
+                Gate::Diagonal(matrix) => matrix.len().ilog2(),
+            },
             qubits.len()
         );
 
@@ -65,30 +71,47 @@ impl QuantumCircuit {
             if base & target_mask != 0 {
                 continue;
             }
+            match gate {
+                Gate::Normal(matrix) => {
+                    // all of the possible combinations for the qubits being targeted
+                    // e.g. 0q0, 0q1, 1q0, 1q1
+                    let indices = (0..local_dim).map(|local_index| {
+                        let mut global_index = base;
+                        for (j, &qubit) in qubits.iter().enumerate() {
+                            let local_bit = (local_index >> (k - 1 - j)) & 1;
+                            let global_bit = bit_position(qubit);
+                            global_index |= local_bit << global_bit;
+                        }
+                        global_index
+                    });
 
-            // all of the possible combinations for the qubits being targeted
-            // e.g. 0q0, 0q1, 1q0, 1q1
-            let indices = (0..local_dim).map(|local_index| {
-                let mut global_index = base;
-                for (j, &qubit) in qubits.iter().enumerate() {
-                    let local_bit = (local_index >> (k - 1 - j)) & 1;
-                    let global_bit = bit_position(qubit);
-                    global_index |= local_bit << global_bit;
+                    // create input from qubits at `indices`
+                    // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
+                    // where A_000 is the amplitude for qubit |000>
+                    let input = Array1::from_iter(indices.clone().map(|i| self.qubits[i]));
+                    // apply gate
+                    let output = matrix.dot(&input);
+                    // write output back into qubits
+                    // indices = [000, 001, 100, 101]
+                    // qubits[indices[n]] = output[n]
+                    for (local_index, global_index) in indices.enumerate() {
+                        self.qubits[global_index] = output[local_index];
+                    }
                 }
-                global_index
-            });
+                Gate::Diagonal(matrix) => {
+                    for local_index in 0..local_dim {
+                        let mut global_index = base;
 
-            // create input from qubits at `indices`
-            // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
-            // where A_000 is the amplitude for qubit |000>
-            let input = Array1::from_iter(indices.clone().map(|i| self.qubits[i]));
-            // apply gate
-            let output = gate.matrix.dot(&input);
-            // write output back into qubits
-            // indices = [000, 001, 100, 101]
-            // qubits[indices[n]] = output[n]
-            for (local_index, global_index) in indices.enumerate() {
-                self.qubits[global_index] = output[local_index];
+                        for (j, &qubit) in qubits.iter().enumerate() {
+                            let local_bit = (local_index >> (k - 1 - j)) & 1;
+                            let global_bit = bit_position(qubit);
+
+                            global_index |= local_bit << global_bit;
+                        }
+
+                        self.qubits[global_index] *= matrix[local_index];
+                    }
+                }
             }
         }
     }

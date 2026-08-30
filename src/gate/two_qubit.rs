@@ -44,7 +44,7 @@ impl Gate {
     /// Controlled-U gate (4-parameter two-qubit gate).
     pub fn cu(theta: f64, phi: f64, lam: f64, gamma: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0.],
             [0., cis(gamma) * cos, 0., -cis(gamma + lam) * sin],
             [0., 0., 1., 0.],
@@ -69,7 +69,7 @@ impl Gate {
     }
     /// Double-CX gate.
     pub fn dcx() -> Self {
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0.],
             [0., 0., 0., 1.],
             [0., 1., 0., 0.],
@@ -78,7 +78,7 @@ impl Gate {
     }
     /// An echoed cross-resonance gate.
     pub fn ecr() -> Self {
-        Self::new_unitary(
+        Self::Normal(
             gate![
                 [0., 1., 0., I],
                 [1., 0., -I, 0.],
@@ -89,7 +89,7 @@ impl Gate {
     }
     /// iSWAP gate.
     pub fn iswap() -> Self {
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0.],
             [0., 0., I, 0.],
             [0., I, 0., 0.],
@@ -99,7 +99,7 @@ impl Gate {
     /// A parametric 2-qubit X⊗X interaction (rotation about XX).
     pub fn rxx(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [cos, 0., 0., -I * sin],
             [0., cos, -I * sin, 0.],
             [0., -I * sin, cos, 0.],
@@ -109,7 +109,7 @@ impl Gate {
     /// A parametric 2-qubit Y⊗Y interaction (rotation about YY).
     pub fn ryy(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [cos, 0., 0., I * sin],
             [0., cos, -I * sin, 0.],
             [0., -I * sin, cos, 0.],
@@ -119,7 +119,7 @@ impl Gate {
     /// A parametric 2-qubit Z⊗X interaction (rotation about ZX).
     pub fn rzx(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [cos, 0., -I * sin, 0.],
             [0., cos, 0., I * sin],
             [-I * sin, 0., cos, 0.],
@@ -128,16 +128,16 @@ impl Gate {
     }
     /// A parametric 2-qubit Z⊗Z interaction (rotation about ZZ).
     pub fn rzz(theta: f64) -> Self {
-        Self::new_unitary(gate![
-            [cis(-theta / 2.0), 0., 0., 0.],
-            [0., cis(theta / 2.0), 0., 0.],
-            [0., 0., cis(theta / 2.0), 0.],
-            [0., 0., 0., cis(-theta / 2.0)]
+        Self::Diagonal(gate![
+            cis(-theta / 2.0),
+            cis(theta / 2.0),
+            cis(theta / 2.0),
+            cis(-theta / 2.0)
         ])
     }
     /// The SWAP gate.
     pub fn swap() -> Self {
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0.],
             [0., 0., 1., 0.],
             [0., 1., 0., 0.],
@@ -147,7 +147,7 @@ impl Gate {
     /// XX-YY interaction gate.
     pub fn xx_minus_yy(theta: f64, beta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [cos, 0., 0., -I * sin * cis(-beta)],
             [0., 1., 0., 0.],
             [0., 0., 1., 0.],
@@ -157,7 +157,7 @@ impl Gate {
     /// XX+YY interaction gate.
     pub fn xx_plus_yy(theta: f64, beta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0.],
             [0., cos, -I * sin * cis(-beta), 0.],
             [0., -I * sin * cis(beta), cos, 0.],

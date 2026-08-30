@@ -34,7 +34,7 @@ impl Gate {
     }
     /// The simplified Toffoli gate, also referred to as Margolus gate.
     pub fn rccx() -> Self {
-        Self::new_unitary(gate![
+        Self::Normal(gate![
             [1., 0., 0., 0., 0., 0., 0., 0.],
             [0., 1., 0., 0., 0., 0., 0., 0.],
             [0., 0., 1., 0., 0., 0., 0., 0.],
@@ -47,7 +47,7 @@ impl Gate {
     }
     /// The simplified 3-controlled Toffoli gate.
     pub fn rcccx() -> Self {
-        Gate::new_unitary(gate![
+        Gate::Normal(gate![
             [
                 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.
             ],
