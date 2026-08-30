@@ -54,7 +54,7 @@ impl Gate {
     }
     /// Single qubit S-adjoint gate (S†).
     pub fn sdg() -> Self {
-        Self::new_unitary(gate![[1., 0.], [0., -I]])
+        Self::s().inverse()
     }
     /// The single-qubit Sqrt(X) gate (√X).
     pub fn sx() -> Self {
@@ -62,7 +62,7 @@ impl Gate {
     }
     /// The inverse single-qubit Sqrt(X) gate.
     pub fn sxdg() -> Self {
-        Self::new_unitary(gate![[-I + 1., I + 1.], [I + 1., -I + 1.]] * 0.5)
+        Self::sx().inverse()
     }
     /// Single qubit T gate (∜Z).
     pub fn t() -> Self {
@@ -70,7 +70,7 @@ impl Gate {
     }
     /// Single qubit T-adjoint gate (T†).
     pub fn tdg() -> Self {
-        Self::new_unitary(gate![[1., 0.], [0., cis(-FRAC_PI_4)]])
+        Self::t().inverse()
     }
     /// Generic single-qubit rotation in terms of ZYZ Euler angles.
     pub fn u(theta: f64, phi: f64, lam: f64) -> Self {

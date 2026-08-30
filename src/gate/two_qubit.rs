@@ -35,7 +35,7 @@ impl Gate {
     }
     /// Controlled-S† gate.
     pub fn csdg() -> Self {
-        Self::s().control(1)
+        Self::sdg().control(1)
     }
     /// Controlled-√X gate.
     pub fn csx() -> Self {
