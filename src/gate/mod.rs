@@ -21,7 +21,7 @@ pub(crate) use gate;
 #[derive(Clone, PartialEq, Debug)]
 pub struct Gate {
     pub(crate) matrix: Array2<Complex>,
-    size: usize,
+    pub(crate) size: usize,
 }
 
 impl Gate {
@@ -48,7 +48,6 @@ impl Gate {
         for _ in 0..num_ctrl_qubits {
             lhs = kron(&lhs, &Array2::eye(2));
         }
-        eprintln!("lhs:\n{lhs}");
         let mut rhs = self.matrix.clone();
         for _ in 0..num_ctrl_qubits {
             rhs = kron(
@@ -59,7 +58,6 @@ impl Gate {
                 &rhs,
             );
         }
-        eprintln!("rhs:\n{rhs}");
         Gate::new_unitary(lhs + rhs)
     }
 
