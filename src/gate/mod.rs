@@ -22,7 +22,7 @@ macro_rules! gate {
 }
 pub(crate) use gate;
 
-/// A quantum gates
+/// A quantum gate
 pub enum Gate {
     Normal(Array2<Complex>),
     Diagonal(Array1<Complex>),
