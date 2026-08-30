@@ -1,87 +1,59 @@
 use std::f64::consts::FRAC_1_SQRT_2;
 
-use crate::{
-    Gate,
-    complex::{I, cis},
-    gate,
-};
+use crate::{Complex, Gate, gate::gate};
+
+const I: Complex = Complex::I;
+fn cis(phase: f64) -> Complex {
+    Complex::cis(phase)
+}
 
 /// 2 qubit gates
 impl Gate {
     /// Controlled-Hadamard gate.
     pub fn ch() -> Self {
-        gate![
-            [1, 0, 0, 0],
-            [0, FRAC_1_SQRT_2, 0, FRAC_1_SQRT_2],
-            [0, 0, 1, 0],
-            [0, FRAC_1_SQRT_2, 0, -FRAC_1_SQRT_2]
-        ]
+        Self::h().control(1)
     }
     /// Controlled-Phase gate.
     pub fn cp(theta: f64) -> Self {
-        gate![
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, cis(theta)]
-        ]
+        Self::p(theta).control(1)
     }
     /// Controlled-RX gate.
     pub fn crx(theta: f64) -> Self {
-        let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [1, 0, 0, 0],
-            [0, cos, 0, -I * sin],
-            [0, 0, 1, 0],
-            [0, -I * sin, 0, cos]
-        ]
+        Self::rx(theta).control(1)
     }
     /// Controlled-RY gate.
     pub fn cry(theta: f64) -> Self {
-        let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [1, 0, 0, 0],
-            [0, cos, 0, -sin],
-            [0, 0, 1, 0],
-            [0, sin, 0, cos]
-        ]
+        Self::ry(theta).control(1)
     }
     /// Controlled-RZ gate.
     pub fn crz(theta: f64) -> Self {
-        gate![
-            [1, 0, 0, 0],
-            [0, cis(-theta / 2.0), 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, cis(theta / 2.0)]
-        ]
+        Self::rz(theta).control(1)
     }
     /// Controlled-S gate.
     pub fn cs() -> Self {
-        gate![[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, I]]
+        Self::s().control(1)
     }
     /// Controlled-S† gate.
     pub fn csdg() -> Self {
-        gate![[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -I]]
+        Self::s().control(1)
     }
     /// Controlled-√X gate.
     pub fn csx() -> Self {
-        let p = (I + 1) / 2.0;
-        let m = (-I + 1) / 2.0;
-        gate![[1, 0, 0, 0], [0, p, 0, m], [0, 0, 1, 0], [0, m, 0, p]]
+        Self::sx().control(1)
     }
     /// Controlled-U gate (4-parameter two-qubit gate).
     pub fn cu(theta: f64, phi: f64, lam: f64, gamma: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [1, 0, 0, 0],
-            [0, cis(gamma) * cos, 0, -cis(gamma + lam) * sin],
-            [0, 0, 1, 0],
-            [0, cis(gamma + phi) * sin, 0, cis(gamma + phi + lam) * sin]
-        ]
+        Self::new_unitary(gate![
+            [1., 0., 0., 0.],
+            [0., cis(gamma) * cos, 0., -cis(gamma + lam) * sin],
+            [0., 0., 1., 0.],
+            [0., cis(gamma + phi) * sin, 0., cis(gamma + phi + lam) * sin]
+        ])
     }
     /// Controlled-X gate.
     pub fn cx() -> Self {
-        gate![[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]
+        Self::x().control(1)
     }
     /// Controlled-X gate.
     pub fn cnot() -> Self {
@@ -89,85 +61,107 @@ impl Gate {
     }
     /// Controlled-Y gate.
     pub fn cy() -> Self {
-        gate![[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, -I], [0, 0, I, 0]]
+        Self::y().control(1)
     }
     /// Controlled-Z gate.
     pub fn cz() -> Self {
-        gate![[1, 0, 0, 0], [0, 0, 0, -I], [0, 0, 1, 0], [0, I, 0, 0]]
+        Self::z().control(1)
     }
     /// Double-CX gate.
     pub fn dcx() -> Self {
-        gate![[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 0]]
+        Self::new_unitary(gate![
+            [1., 0., 0., 0.],
+            [0., 0., 0., 1.],
+            [0., 1., 0., 0.],
+            [0., 0., 1., 0.]
+        ])
     }
     /// An echoed cross-resonance gate.
     pub fn ecr() -> Self {
-        gate![[0, 1, 0, I], [1, 0, -I, 0], [0, I, 0, 1], [-I, 0, 1, 0]] * FRAC_1_SQRT_2
+        Self::new_unitary(
+            gate![
+                [0., 1., 0., I],
+                [1., 0., -I, 0.],
+                [0., I, 0., 1.],
+                [-I, 0., 1., 0.]
+            ] * FRAC_1_SQRT_2,
+        )
     }
     /// iSWAP gate.
     pub fn iswap() -> Self {
-        gate![[1, 0, 0, 0], [0, 0, I, 0], [0, I, 0, 0], [0, 0, 0, 1]]
+        Self::new_unitary(gate![
+            [1., 0., 0., 0.],
+            [0., 0., I, 0.],
+            [0., I, 0., 0.],
+            [0., 0., 0., 1.]
+        ])
     }
     /// A parametric 2-qubit X⊗X interaction (rotation about XX).
     pub fn rxx(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [cos, 0, 0, -I * sin],
-            [0, cos, -I * sin, 0],
-            [0, -I * sin, cos, 0],
-            [-I * sin, 0, 0, cos]
-        ]
+        Self::new_unitary(gate![
+            [cos, 0., 0., -I * sin],
+            [0., cos, -I * sin, 0.],
+            [0., -I * sin, cos, 0.],
+            [-I * sin, 0., 0., cos]
+        ])
     }
     /// A parametric 2-qubit Y⊗Y interaction (rotation about YY).
     pub fn ryy(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [cos, 0, 0, I * sin],
-            [0, cos, -I * sin, 0],
-            [0, -I * sin, cos, 0],
-            [I * sin, 0, 0, cos]
-        ]
+        Self::new_unitary(gate![
+            [cos, 0., 0., I * sin],
+            [0., cos, -I * sin, 0.],
+            [0., -I * sin, cos, 0.],
+            [I * sin, 0., 0., cos]
+        ])
     }
     /// A parametric 2-qubit Z⊗X interaction (rotation about ZX).
     pub fn rzx(theta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [cos, 0, -I * sin, 0],
-            [0, cos, 0, I * sin],
-            [-I * sin, 0, cos, 0],
-            [0, I * sin, 0, cos]
-        ]
+        Self::new_unitary(gate![
+            [cos, 0., -I * sin, 0.],
+            [0., cos, 0., I * sin],
+            [-I * sin, 0., cos, 0.],
+            [0., I * sin, 0., cos]
+        ])
     }
     /// A parametric 2-qubit Z⊗Z interaction (rotation about ZZ).
     pub fn rzz(theta: f64) -> Self {
-        gate![
-            [cis(-theta / 2.0), 0, 0, 0],
-            [0, cis(theta / 2.0), 0, 0],
-            [0, 0, cis(theta / 2.0), 0],
-            [0, 0, 0, cis(-theta / 2.0)]
-        ]
+        Self::new_unitary(gate![
+            [cis(-theta / 2.0), 0., 0., 0.],
+            [0., cis(theta / 2.0), 0., 0.],
+            [0., 0., cis(theta / 2.0), 0.],
+            [0., 0., 0., cis(-theta / 2.0)]
+        ])
     }
     /// The SWAP gate.
     pub fn swap() -> Self {
-        gate![[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+        Self::new_unitary(gate![
+            [1., 0., 0., 0.],
+            [0., 0., 1., 0.],
+            [0., 1., 0., 0.],
+            [0., 0., 0., 1.]
+        ])
     }
     /// XX-YY interaction gate.
     pub fn xx_minus_yy(theta: f64, beta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [cos, 0, 0, -I * sin * cis(-beta)],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [-I * sin * cis(beta), 0, 0, cos]
-        ]
+        Self::new_unitary(gate![
+            [cos, 0., 0., -I * sin * cis(-beta)],
+            [0., 1., 0., 0.],
+            [0., 0., 1., 0.],
+            [-I * sin * cis(beta), 0., 0., cos]
+        ])
     }
     /// XX+YY interaction gate.
     pub fn xx_plus_yy(theta: f64, beta: f64) -> Self {
         let (sin, cos) = (theta / 2.0).sin_cos();
-        gate![
-            [1, 0, 0, 0],
-            [0, cos, -I * sin * cis(-beta), 0],
-            [0, -I * sin * cis(beta), cos, 0],
-            [0, 0, 0, 1]
-        ]
+        Self::new_unitary(gate![
+            [1., 0., 0., 0.],
+            [0., cos, -I * sin * cis(-beta), 0.],
+            [0., -I * sin * cis(beta), cos, 0.],
+            [0., 0., 0., 1.]
+        ])
     }
 }

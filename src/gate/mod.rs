@@ -4,236 +4,73 @@ mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
-use std::{
-    fmt::Display,
-    ops::{Add, Index, IndexMut, Mul, Sub},
-};
+use crate::{Array2, Complex};
 
-use crate::{Complex, StateVector};
+use ndarray::{array, linalg::kron};
+
+macro_rules! gate {
+    ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
+        ndarray::array![
+            $([$(num_complex::Complex64::from($el),)+],)+
+        ]
+    };
+}
+pub(crate) use gate;
 
 /// A quantum gate
 #[derive(Clone, PartialEq, Debug)]
 pub struct Gate {
-    elements: StateVector,
+    pub(crate) matrix: Array2<Complex>,
     size: usize,
 }
 
-/// Create a [`Gate`]
-#[macro_export]
-macro_rules! gate {
-    ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
-        $crate::Gate::from([
-            $($($crate::Complex::from($el),)+)+
-        ])
-    };
-}
-
 impl Gate {
-    /// Initialise a `size` by `size` [`Gate`] with [`Complex::ZERO`] in each element
-    pub fn zeros(size: usize) -> Self {
-        Self {
-            elements: vec![Complex::ZERO; size * size],
-            size,
-        }
-    }
-    /// Initialise a [`Gate`] with `elems` on the diagonal
-    pub fn from_diag(elems: &[Complex]) -> Self {
-        let mut base = Self::zeros(elems.len());
-        for (i, &el) in elems.iter().enumerate() {
-            base[(i, i)] = el;
-        }
-        base
-    }
-    /// Initialise a [`Gate`] with [`Complex::ONE`] along the diagonal
-    pub fn eye(size: usize) -> Self {
-        Self::from_diag(&vec![Complex::ONE; size])
-    }
-    /// Get the adjoint of a [`Gate`]
-    #[doc(alias = "inverse", alias = "dagger")]
-    pub fn adjoint(&self) -> Self {
-        self.transpose().conjugate()
-    }
-    /// Create a unitary [`Gate`]
-    pub fn unitary(value: Vec<Vec<Complex>>) -> Self {
-        assert!(
-            value.iter().all(|row| value.len() == row.len()),
-            "Gate matrix is not square"
-        );
-        let size = value.len();
-        let elements = value.into_iter().flatten().collect();
-        let gate = Self { elements, size };
+    /// Create a [`Gate`] from a unitary matrix
+    pub fn new(matrix: Array2<Complex>) -> Self {
+        assert!(matrix.is_square(), "Gate matrix is not square");
+        let gate = Self::new_unitary(matrix);
         assert!(gate.is_unitary(), "Gate is not unitary");
         gate
     }
-    /// Find the Kronecker product between `self` and `rhs`.
-    /// Also known as the tensor product
-    #[doc(alias = "tensor")]
-    pub fn kron(&self, rhs: &Self) -> Self {
-        let mut out = Gate::zeros(self.size * rhs.size);
-        for i in 0..self.size {
-            for j in 0..self.size {
-                for p in 0..rhs.size {
-                    for q in 0..rhs.size {
-                        out[(i * rhs.size + p, j * rhs.size + q)] = self[(i, j)] * rhs[(p, q)]
-                    }
-                }
-            }
+    /// Get the adjoint of a [`Gate`]
+    #[doc(alias = "adjoint", alias = "dagger")]
+    pub fn inverse(&self) -> Self {
+        let matrix = self.matrix.t().map(|el| el.conj());
+        assert!(matrix.is_square(), "Inverse matrix is not square");
+        Self::new_unitary(matrix)
+    }
+    /// Add `num_qubits` control qubits to the [`Gate`]
+    pub fn control(&self, num_ctrl_qubits: usize) -> Self {
+        let mut lhs = array![
+            [Complex::ONE, Complex::ZERO],
+            [Complex::ZERO, Complex::ZERO]
+        ];
+        for _ in 0..num_ctrl_qubits {
+            lhs = kron(&lhs, &Array2::eye(2));
         }
-        out
+        eprintln!("lhs:\n{lhs}");
+        let mut rhs = self.matrix.clone();
+        for _ in 0..num_ctrl_qubits {
+            rhs = kron(
+                &array![
+                    [Complex::ZERO, Complex::ZERO],
+                    [Complex::ZERO, Complex::ONE]
+                ],
+                &rhs,
+            );
+        }
+        eprintln!("rhs:\n{rhs}");
+        Gate::new_unitary(lhs + rhs)
     }
 
-    fn transpose(&self) -> Self {
-        let mut out = Gate::zeros(self.size);
-        for i in 0..self.size {
-            for j in 0..self.size {
-                out[(j, i)] = self[(i, j)];
-            }
-        }
-        out
+    fn is_unitary(&self) -> bool {
+        let eye = Array2::eye(self.size);
+        self.inverse().matrix.dot(&self.matrix) == eye
     }
-    fn conjugate(&self) -> Self {
-        let mut out = self.clone();
-        out.elements.iter_mut().for_each(|el| *el = el.conj());
-        out
-    }
-    pub(crate) fn is_unitary(&self) -> bool {
-        let eye = Gate::eye(self.size);
-        let gate = self.clone();
-        gate.transpose().conjugate() * gate == eye
-    }
-}
-
-impl<T> From<T> for Gate
-where
-    T: Into<Vec<Complex>>,
-{
-    fn from(value: T) -> Self {
-        let value = value.into();
-        let size = value.len().isqrt();
-        assert_eq!(size * size, value.len(), "Gate matrix is not square");
+    fn new_unitary(matrix: Array2<Complex>) -> Self {
         Self {
-            elements: value,
-            size,
+            size: matrix.nrows(),
+            matrix,
         }
-    }
-}
-
-impl Index<(usize, usize)> for Gate {
-    type Output = Complex;
-    fn index(&self, index: (usize, usize)) -> &Self::Output {
-        &self.elements[index.0 * self.size + index.1]
-    }
-}
-impl IndexMut<(usize, usize)> for Gate {
-    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
-        &mut self.elements[index.0 * self.size + index.1]
-    }
-}
-impl Index<usize> for Gate {
-    type Output = Complex;
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.elements[index]
-    }
-}
-impl IndexMut<usize> for Gate {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.elements[index]
-    }
-}
-
-impl Mul<f64> for Gate {
-    type Output = Self;
-    fn mul(self, rhs: f64) -> Self::Output {
-        let mut out = self.clone();
-        out.elements.iter_mut().for_each(|el| *el *= rhs);
-        out
-    }
-}
-impl Mul<Complex> for Gate {
-    type Output = Self;
-    fn mul(self, rhs: Complex) -> Self::Output {
-        let mut out = self.clone();
-        out.elements.iter_mut().for_each(|el| *el *= rhs);
-        out
-    }
-}
-impl Mul for Gate {
-    type Output = Self;
-    fn mul(self, rhs: Self) -> Self::Output {
-        // https://yaikhom.com/2020-05-26-matrix-multiplication.html
-        assert_eq!(self.size, rhs.size);
-        let mut out = Self::zeros(self.size);
-        let mut a = 0;
-        let mut cc = 0;
-        for _ in 0..self.size {
-            let mut b = 0;
-            for _ in 0..self.size {
-                for c in (cc..).take(self.size) {
-                    out[c] += self[a] * rhs[b];
-                    b += 1;
-                }
-                a += 1;
-            }
-            cc += self.size;
-        }
-        out
-    }
-}
-impl Mul<StateVector> for Gate {
-    type Output = StateVector;
-    fn mul(self, rhs: StateVector) -> Self::Output {
-        assert_eq!(self.size, rhs.len());
-        let mut out = vec![Complex::ZERO; rhs.len()];
-        for i in 0..self.size {
-            for j in 0..self.size {
-                out[i] += self[(i, j)] * rhs[j]
-            }
-        }
-        out
-    }
-}
-
-impl Sub for Gate {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self::Output {
-        assert_eq!(self.size, rhs.size);
-        let mut out = self.clone();
-        out.elements
-            .iter_mut()
-            .enumerate()
-            .for_each(|(i, el)| *el -= rhs[i]);
-        out
-    }
-}
-
-impl Add for Gate {
-    type Output = Gate;
-    fn add(self, rhs: Self) -> Self::Output {
-        let mut out = self.clone();
-        out.elements
-            .iter_mut()
-            .enumerate()
-            .for_each(|(i, el)| *el += rhs[i]);
-        out
-    }
-}
-
-impl Display for Gate {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[")?;
-        for i in 0..self.size {
-            if i > 0 {
-                write!(f, ",\n ")?;
-            }
-            write!(f, "[")?;
-            for j in 0..self.size {
-                if j > 0 {
-                    write!(f, ", ")?;
-                }
-                write!(f, "{}", self[(i, j)])?;
-            }
-            write!(f, "]")?;
-        }
-        write!(f, "]")
     }
 }

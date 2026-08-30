@@ -1,5 +1,4 @@
 mod circuit;
-mod complex;
 mod gate;
 mod qubits;
 #[cfg(test)]
@@ -8,10 +7,12 @@ pub mod tests;
 use std::collections::HashMap;
 
 pub use circuit::QuantumCircuit;
-pub use complex::Complex;
 pub use gate::Gate;
 
-pub(crate) type StateVector = Vec<Complex>;
+pub use ndarray::{Array1, Array2};
+pub use num_complex::Complex64 as Complex;
+
+pub(crate) type StateVector = Array1<Complex>;
 
 /// Sample the outcome of the [`QuantumCircuit`] `sample` times. Returns the output as a
 /// [`HashMap`] where the key is the measurement and the value is the number of times it appeared.

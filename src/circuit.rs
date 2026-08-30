@@ -1,33 +1,4 @@
-use crate::{Complex, Gate, StateVector, qubits::Qubits};
-
-macro_rules! impl_gate {
-    (1, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
-        #[doc = $doc]
-        pub fn $name(&mut self, $($arg: $ty,)* idx: impl Into<$crate::qubits::Qubits>) {
-            match idx.into() {
-                $crate::qubits::Qubits::Single(idx) => self.unitary(&$crate::Gate::$name($($arg,)*), idx),
-                $crate::qubits::Qubits::Array(idxs) => {
-                    for idx in idxs {
-                        self.unitary(&$crate::Gate::$name($($arg,)*), idx);
-                    }
-                }
-            }
-
-        }
-    };
-    (2, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
-        #[doc = $doc]
-        pub fn $name(&mut self, $($arg: $ty,)* q0: usize, q1: usize) {
-            self.unitary(&$crate::Gate::$name($($arg,)*), &[q0, q1])
-        }
-    };
-    ($name:ident, $($arg:ident: $ty:ty,)* [$($qubit:ident),* $(,)?], $doc:literal) => {
-        #[doc = $doc]
-        pub fn $name(&mut self, $($arg: $ty,)* $($qubit: usize,)*) {
-            self.unitary(&$crate::Gate::$name($($arg,)*), &[$($qubit,)*])
-        }
-    };
-}
+use crate::{Array1, Complex, Gate, StateVector, qubits::Qubits};
 
 /// A quantum circuit
 #[derive(Clone)]
@@ -39,7 +10,7 @@ pub struct QuantumCircuit {
 impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     pub fn new(num_qubits: usize) -> Self {
-        let mut qubits = vec![Complex::ZERO; 1 << num_qubits];
+        let mut qubits = Array1::zeros(1 << num_qubits);
         qubits[0] = Complex::new(1.0, 0.0);
         Self { qubits, num_qubits }
     }
@@ -59,13 +30,12 @@ impl QuantumCircuit {
 
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
-        self.qubits = vec![Complex::ZERO; 1 << self.num_qubits];
+        self.qubits = Array1::zeros(1 << self.num_qubits);
         self.qubits[0] = Complex::new(1.0, 0.0);
     }
 
     /// Apply unitary `gate` to `qubits`
     pub fn unitary(&mut self, gate: &Gate, qubits: impl Into<Qubits>) {
-        assert!(gate.is_unitary(), "Gate is not unitary\n{gate}");
         let qubits = match qubits.into() {
             Qubits::Single(q) => vec![q],
             Qubits::Array(qs) => qs,
@@ -106,9 +76,9 @@ impl QuantumCircuit {
             // create input from qubits at `indices`
             // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
             // where A_000 is the amplitude for qubit |000>
-            let input = Vec::from_iter(indices.iter().map(|&i| self.qubits[i]));
+            let input = Array1::from_iter(indices.iter().map(|&i| self.qubits[i]));
             // apply gate
-            let output = gate.clone() * input;
+            let output = gate.matrix.dot(&input);
             // write output back into qubits
             // indices = [000, 001, 100, 101]
             // qubits[indices[n]] = output[n]
@@ -119,6 +89,35 @@ impl QuantumCircuit {
 
         self.qubits = result;
     }
+}
+
+macro_rules! impl_gate {
+    (1, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
+        #[doc = $doc]
+        pub fn $name(&mut self, $($arg: $ty,)* idx: impl Into<$crate::qubits::Qubits>) {
+            match idx.into() {
+                $crate::qubits::Qubits::Single(idx) => self.unitary(&$crate::Gate::$name($($arg,)*), idx),
+                $crate::qubits::Qubits::Array(idxs) => {
+                    for idx in idxs {
+                        self.unitary(&$crate::Gate::$name($($arg,)*), idx);
+                    }
+                }
+            }
+
+        }
+    };
+    (2, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
+        #[doc = $doc]
+        pub fn $name(&mut self, $($arg: $ty,)* q0: usize, q1: usize) {
+            self.unitary(&$crate::Gate::$name($($arg,)*), &[q0, q1])
+        }
+    };
+    ($name:ident, $($arg:ident: $ty:ty,)* [$($qubit:ident),* $(,)?], $doc:literal) => {
+        #[doc = $doc]
+        pub fn $name(&mut self, $($arg: $ty,)* $($qubit: usize,)*) {
+            self.unitary(&$crate::Gate::$name($($arg,)*), &[$($qubit,)*])
+        }
+    };
 }
 
 /// Single qubit gates
