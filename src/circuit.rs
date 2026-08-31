@@ -178,7 +178,7 @@ impl QuantumCircuit {
 }
 
 macro_rules! impl_gate {
-    (1, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
+    ($name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
         #[doc = $doc]
         pub fn $name(&mut self, $($arg: $ty,)* idx: impl Into<$crate::qubits::Qubits>) {
             match idx.into() {
@@ -192,12 +192,6 @@ macro_rules! impl_gate {
 
         }
     };
-    (2, $name:ident, $($arg:ident: $ty:ty,)* $doc:literal) => {
-        #[doc = $doc]
-        pub fn $name(&mut self, $($arg: $ty,)* q0: usize, q1: usize) {
-            self.unitary(&$crate::Gate::$name($($arg,)*), &[q0, q1])
-        }
-    };
     ($name:ident, $($arg:ident: $ty:ty,)* [$($qubit:ident),* $(,)?], $doc:literal) => {
         #[doc = $doc]
         pub fn $name(&mut self, $($arg: $ty,)* $($qubit: usize,)*) {
@@ -208,51 +202,51 @@ macro_rules! impl_gate {
 
 /// Single qubit gates
 impl QuantumCircuit {
-    impl_gate!(1, h, "Single-qubit Hadamard gate");
-    impl_gate!(1, i, "Identity gate.");
-    impl_gate!(1, id, "Identity gate.");
-    impl_gate!(1, p, theta: f64, "Single-qubit rotation around the Z axis.");
-    impl_gate!(1, r, theta: f64, phi: f64, "Rotation θ around the cos(ϕ)x+sin(ϕ)y axis.");
-    impl_gate!(1, rx, theta: f64, "Single-qubit rotation about the X axis.");
-    impl_gate!(1, ry, theta: f64, "Single-qubit rotation about the Y axis.");
-    impl_gate!(1, rz, phi: f64, "Single-qubit rotation about the Z axis.");
-    impl_gate!(1, s, "Single qubit S gate (√Z).");
-    impl_gate!(1, sdg, "Single qubit S-adjoint gate (S†).");
-    impl_gate!(1, sx, "The single-qubit Sqrt(X) gate (√X).");
-    impl_gate!(1, sxdg, "The inverse single-qubit Sqrt(X) gate.");
-    impl_gate!(1, t, "Single qubit T gate (∜Z).");
-    impl_gate!(1, tdg, "Single qubit T-adjoint gate (T†).");
-    impl_gate!(1, u, theta: f64, phi: f64, lam: f64, "Generic single-qubit rotation in terms of ZYZ Euler angles.");
-    impl_gate!(1, x, "The single-qubit Pauli-X gate (σ_x).");
-    impl_gate!(1, y, "The single-qubit Pauli-Y gate (σ_y).");
-    impl_gate!(1, z, "The single-qubit Pauli-Z gate (σ_z).");
+    impl_gate!(h, "Single-qubit Hadamard gate");
+    impl_gate!(i, "Identity gate.");
+    impl_gate!(id, "Identity gate.");
+    impl_gate!(p, theta: f64, "Single-qubit rotation around the Z axis.");
+    impl_gate!(r, theta: f64, phi: f64, "Rotation θ around the cos(ϕ)x+sin(ϕ)y axis.");
+    impl_gate!(rx, theta: f64, "Single-qubit rotation about the X axis.");
+    impl_gate!(ry, theta: f64, "Single-qubit rotation about the Y axis.");
+    impl_gate!(rz, phi: f64, "Single-qubit rotation about the Z axis.");
+    impl_gate!(s, "Single qubit S gate (√Z).");
+    impl_gate!(sdg, "Single qubit S-adjoint gate (S†).");
+    impl_gate!(sx, "The single-qubit Sqrt(X) gate (√X).");
+    impl_gate!(sxdg, "The inverse single-qubit Sqrt(X) gate.");
+    impl_gate!(t, "Single qubit T gate (∜Z).");
+    impl_gate!(tdg, "Single qubit T-adjoint gate (T†).");
+    impl_gate!(u, theta: f64, phi: f64, lam: f64, "Generic single-qubit rotation in terms of ZYZ Euler angles.");
+    impl_gate!(x, "The single-qubit Pauli-X gate (σ_x).");
+    impl_gate!(y, "The single-qubit Pauli-Y gate (σ_y).");
+    impl_gate!(z, "The single-qubit Pauli-Z gate (σ_z).");
 }
 
 /// 2 qubit gates
 impl QuantumCircuit {
-    impl_gate!(2, ch, "Controlled-Hadamard gate.");
-    impl_gate!(2, cp, theta: f64, "Controlled-Phase gate.");
-    impl_gate!(2, crx, theta: f64, "Controlled-RX gate.");
-    impl_gate!(2, cry, theta: f64, "Controlled-RY gate.");
-    impl_gate!(2, crz, theta: f64, "Controlled-RZ gate.");
-    impl_gate!(2, cs, "Controlled-S gate.");
-    impl_gate!(2, csdg, "Controlled-S† gate.");
-    impl_gate!(2, csx, "Controlled-√X gate.");
-    impl_gate!(2, cu, theta: f64, phi: f64, lam: f64, gamma: f64, "Controlled-U gate (4-parameter two-qubit gate).");
-    impl_gate!(2, cx, "Controlled-X gate.");
-    impl_gate!(2, cnot, "Controlled-X gate.");
-    impl_gate!(2, cy, "Controlled-Y gate.");
-    impl_gate!(2, cz, "Controlled-Z gate.");
-    impl_gate!(2, dcx, "Double-CX gate.");
-    impl_gate!(2, ecr, "An echoed cross-resonance gate.");
-    impl_gate!(2, iswap, "iSWAP gate.");
-    impl_gate!(2, rxx, theta: f64, "A parametric 2-qubit X⊗X interaction (rotation about XX).");
-    impl_gate!(2, ryy, theta: f64, "A parametric 2-qubit Y⊗Y interaction (rotation about YY).");
-    impl_gate!(2, rzx, theta: f64, "A parametric 2-qubit Z⊗X interaction (rotation about ZX).");
-    impl_gate!(2, rzz, theta: f64, "A parametric 2-qubit Z⊗Z interaction (rotation about ZZ).");
-    impl_gate!(2, swap, "The SWAP gate.");
-    impl_gate!(2, xx_minus_yy, theta: f64, beta: f64, "XX-YY interaction gate.");
-    impl_gate!(2, xx_plus_yy, theta: f64, beta: f64, "XX+YY interaction gate.");
+    impl_gate!(ch, [q0, q1], "Controlled-Hadamard gate.");
+    impl_gate!(cp, theta: f64, [q0, q1], "Controlled-Phase gate.");
+    impl_gate!(crx, theta: f64, [q0, q1], "Controlled-RX gate.");
+    impl_gate!(cry, theta: f64, [q0, q1], "Controlled-RY gate.");
+    impl_gate!(crz, theta: f64, [q0, q1], "Controlled-RZ gate.");
+    impl_gate!(cs, [q0, q1], "Controlled-S gate.");
+    impl_gate!(csdg, [q0, q1], "Controlled-S† gate.");
+    impl_gate!(csx, [q0, q1], "Controlled-√X gate.");
+    impl_gate!(cu, theta: f64, phi: f64, lam: f64, gamma: f64, [q0, q1], "Controlled-U gate (4-parameter two-qubit gate).");
+    impl_gate!(cx, [q0, q1], "Controlled-X gate.");
+    impl_gate!(cnot, [q0, q1], "Controlled-X gate.");
+    impl_gate!(cy, [q0, q1], "Controlled-Y gate.");
+    impl_gate!(cz, [q0, q1], "Controlled-Z gate.");
+    impl_gate!(dcx, [q0, q1], "Double-CX gate.");
+    impl_gate!(ecr, [q0, q1], "An echoed cross-resonance gate.");
+    impl_gate!(iswap, [q0, q1], "iSWAP gate.");
+    impl_gate!(rxx, theta: f64, [q0, q1], "A parametric 2-qubit X⊗X interaction (rotation about XX).");
+    impl_gate!(ryy, theta: f64, [q0, q1], "A parametric 2-qubit Y⊗Y interaction (rotation about YY).");
+    impl_gate!(rzx, theta: f64, [q0, q1], "A parametric 2-qubit Z⊗X interaction (rotation about ZX).");
+    impl_gate!(rzz, theta: f64, [q0, q1], "A parametric 2-qubit Z⊗Z interaction (rotation about ZZ).");
+    impl_gate!(swap, [q0, q1], "The SWAP gate.");
+    impl_gate!(xx_minus_yy, theta: f64, beta: f64, [q0, q1], "XX-YY interaction gate.");
+    impl_gate!(xx_plus_yy, theta: f64, beta: f64, [q0, q1], "XX+YY interaction gate.");
 }
 
 /// 3+ qubit gates
