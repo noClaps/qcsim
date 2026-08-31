@@ -37,7 +37,14 @@ impl QuantumCircuit {
     /// Apply unitary `gate` to `qubits`
     pub fn unitary(&mut self, gate: &Gate, qubits: impl Into<Qubits>) {
         let qubits = match qubits.into() {
-            Qubits::Single(q) => vec![q],
+            Qubits::Single(q) => {
+                self.apply_single_qubit(gate, q);
+                return;
+            }
+            Qubits::Array(qs) if qs.len() == 1 => {
+                self.apply_single_qubit(gate, qs[0]);
+                return;
+            }
             Qubits::Array(qs) => qs,
         };
         let state_len = self.qubits.len();
@@ -51,7 +58,7 @@ impl QuantumCircuit {
                 Gate::Normal(matrix) => matrix.nrows().ilog2(),
                 Gate::Diagonal(matrix) => matrix.len().ilog2(),
             } as usize,
-            "Cannot apply {} qubit gate to {} qubit(s)",
+            "Cannot apply {}-qubit gate to {} qubits",
             match gate {
                 Gate::Normal(matrix) => matrix.nrows().ilog2(),
                 Gate::Diagonal(matrix) => matrix.len().ilog2(),
@@ -110,6 +117,59 @@ impl QuantumCircuit {
                         }
 
                         self.qubits[global_index] *= matrix[local_index];
+                    }
+                }
+            }
+        }
+    }
+
+    fn apply_single_qubit(&mut self, gate: &Gate, qubit: usize) {
+        let mask = 1 << (self.num_qubits - 1 - qubit);
+        let block_size = mask << 1;
+
+        match gate {
+            Gate::Normal(matrix) => {
+                assert_eq!(
+                    matrix.nrows(),
+                    2,
+                    "Cannot apply {}-qubit gate to 1 qubit",
+                    matrix.nrows().ilog2()
+                );
+                let g00 = matrix[(0, 0)];
+                let g01 = matrix[(0, 1)];
+                let g10 = matrix[(1, 0)];
+                let g11 = matrix[(1, 1)];
+
+                for block_start in (0..self.qubits.len()).step_by(block_size) {
+                    for offset in 0..mask {
+                        let i0 = block_start + offset;
+                        let i1 = i0 + mask;
+
+                        let a0 = self.qubits[i0];
+                        let a1 = self.qubits[i1];
+
+                        self.qubits[i0] = g00 * a0 + g01 * a1;
+                        self.qubits[i1] = g10 * a0 + g11 * a1;
+                    }
+                }
+            }
+            Gate::Diagonal(matrix) => {
+                assert_eq!(
+                    matrix.len(),
+                    2,
+                    "Cannot apply {}-qubit gate to 1 qubit",
+                    matrix.len().ilog2()
+                );
+                let d0 = matrix[0];
+                let d1 = matrix[1];
+
+                for block_start in (0..self.qubits.len()).step_by(block_size) {
+                    for offset in 0..mask {
+                        let i0 = block_start + offset;
+                        let i1 = i0 + mask;
+
+                        self.qubits[i0] *= d0;
+                        self.qubits[i1] *= d1;
                     }
                 }
             }
