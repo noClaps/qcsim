@@ -48,7 +48,7 @@ impl Gate {
             [1., 0., 0., 0.],
             [0., cis(gamma) * cos, 0., -cis(gamma + lam) * sin],
             [0., 0., 1., 0.],
-            [0., cis(gamma + phi) * sin, 0., cis(gamma + phi + lam) * sin]
+            [0., cis(gamma + phi) * sin, 0., cis(gamma + phi + lam) * cos]
         ])
     }
     /// Controlled-X gate.
