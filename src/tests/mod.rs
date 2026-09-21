@@ -2,13 +2,15 @@ mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
-/// Checks if the output contains only the provided keys. Panics if any other keys are present.
-macro_rules! assert_output {
-    ($output:expr, $($el:literal),* $(,)?) => {
-        assert!($output.keys().all(|k| [$($el,)*].contains(k)), "Expected: {:?}\nFound: {:?}", [$($el,)*], $output)
+/// Samples the quantum circuit 10,000 times and checks if the output contains only the provided
+/// keys. Panics if any other keys are present.
+macro_rules! assert_qc {
+    ($qc:expr, $($el:literal),* $(,)?) => {
+        let output = crate::sample($qc, 10000);
+        assert!(output.keys().all(|k| [$($el,)*].contains(k)), "Expected: {:?}\nFound: {:?}", [$($el,)*], output)
     };
 }
-pub(crate) use assert_output;
+pub(crate) use assert_qc;
 
 use crate::{QuantumCircuit, sample};
 
