@@ -32,6 +32,10 @@ impl Gate {
     /// Create a [`Gate`] from a unitary matrix
     pub fn new(matrix: Array2<Complex>) -> Self {
         assert!(matrix.is_square(), "Gate matrix is not square");
+        assert!(
+            matrix.nrows().is_power_of_two(),
+            "Gate matrix order is not a power of 2"
+        );
         let gate = if is_diagonal(&matrix) {
             Self::Diagonal(matrix.into_diag())
         } else {
