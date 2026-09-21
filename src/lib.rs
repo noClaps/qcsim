@@ -30,6 +30,10 @@ pub(crate) type StateVector = Array1<Complex>;
 /// // output[0b10] = ~5000
 /// ```
 pub fn sample(qc: QuantumCircuit, samples: usize) -> HashMap<usize, usize> {
+    assert!(
+        (qc.qubits.fold(0.0, |acc, q| acc + q.norm_sqr()) - 1.0).abs() < 1e-12,
+        "Total sum of squared amplitudes does not equal 1"
+    );
     let mut outputs = HashMap::new();
     for _ in 0..samples {
         let measurement = qc.clone().measure();
