@@ -108,3 +108,26 @@ fn swap() {
     qc.swap(0, 1); // |01>
     assert_qc!(qc, 0b01);
 }
+
+#[test]
+fn cu_identity() {
+    let mut qc = QuantumCircuit::new(2); // |00>
+    qc.cu(0.0, 0.0, 0.0, 0.0, 0, 1); // |00>
+    assert_qc!(qc, 0b00);
+
+    let mut qc = QuantumCircuit::new(2); // |00>
+    qc.x(1); // |01>
+    qc.cu(0.0, 0.0, 0.0, 0.0, 0, 1); // |01>
+    assert_qc!(qc, 0b01);
+
+    let mut qc = QuantumCircuit::new(2); // |00>
+    qc.x(0); // |10>
+    qc.cu(0.0, 0.0, 0.0, 0.0, 0, 1); // |10>
+    assert_qc!(qc, 0b10);
+
+    let mut qc = QuantumCircuit::new(2); // |00>
+    qc.x(0); // |10>
+    qc.x(1); // |11>
+    qc.cu(0.0, 0.0, 0.0, 0.0, 0, 1); // |11>
+    assert_qc!(qc, 0b11);
+}
