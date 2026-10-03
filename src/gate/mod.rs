@@ -11,12 +11,12 @@ use ndarray::{Array1, Axis, array, linalg::kron};
 macro_rules! gate {
     ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
         ndarray::array![
-            $([$(num_complex::Complex64::from($el),)+],)+
+            $([$(crate::Complex::from($el),)+],)+
         ]
     };
     ($($el:expr),+ $(,)?) => {
         ndarray::array![
-            $(num_complex::Complex64::from($el),)+
+            $(crate::Complex::from($el),)+
         ]
     };
 }

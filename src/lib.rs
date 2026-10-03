@@ -1,4 +1,5 @@
 mod circuit;
+mod complex;
 mod gate;
 mod qubits;
 #[cfg(test)]
@@ -7,10 +8,10 @@ pub mod tests;
 use std::collections::HashMap;
 
 pub use circuit::QuantumCircuit;
+pub use complex::Complex;
 pub use gate::Gate;
 
 pub use ndarray::{Array1, Array2};
-pub use num_complex::Complex64 as Complex;
 
 pub(crate) type StateVector = Array1<Complex>;
 
