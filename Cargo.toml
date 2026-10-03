@@ -17,3 +17,6 @@ unicode-plot = "0.1.0"
 [profile.flamegraph]
 inherits = "release"
 debug = true
+
+[lints.clippy]
+pedantic = "warn"

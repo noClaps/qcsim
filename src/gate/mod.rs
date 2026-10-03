@@ -30,6 +30,13 @@ pub enum Gate {
 
 impl Gate {
     /// Create a [`Gate`] from a unitary matrix
+    ///
+    /// # Panics
+    ///
+    /// - Panics if `matrix` is not square.
+    /// - Panics if `matrix` order is not a power of 2.
+    /// - Panics if `matrix` is not unitary.
+    #[must_use]
     pub fn new(matrix: Array2<Complex>) -> Self {
         assert!(matrix.is_square(), "Gate matrix is not square");
         assert!(
@@ -45,18 +52,28 @@ impl Gate {
         gate
     }
     /// Get the adjoint of a [`Gate`]
+    ///
+    /// # Panics
+    ///
+    /// Panics if the inverse matrix is not square.
     #[doc(alias = "adjoint", alias = "dagger")]
+    #[must_use]
     pub fn inverse(&self) -> Self {
         match self {
             Self::Normal(matrix) => {
-                let matrix = matrix.t().map(|el| el.conj());
+                let matrix = matrix.t().map(Complex::conj);
                 assert!(matrix.is_square(), "Inverse matrix is not square");
                 Self::Normal(matrix)
             }
-            Self::Diagonal(matrix) => Self::Diagonal(matrix.map(|el| el.conj())),
+            Self::Diagonal(matrix) => Self::Diagonal(matrix.map(Complex::conj)),
         }
     }
     /// Add `num_qubits` control qubits to the [`Gate`]
+    ///
+    /// # Panics
+    ///
+    /// Panics if there is an error during [`Gate`] construction.
+    #[must_use]
     pub fn control(&self, num_ctrl_qubits: usize) -> Self {
         match self {
             Self::Normal(matrix) => {
@@ -80,20 +97,20 @@ impl Gate {
                 Gate::Normal(lhs + rhs)
             }
             Self::Diagonal(matrix) => {
-                let mut mat = vec![array![Complex::ONE, Complex::ONE]; num_ctrl_qubits];
-                let mat = mat
-                    .iter_mut()
-                    .reduce(|acc, a| {
-                        acc.append(Axis(0), a.view()).unwrap();
-                        acc
-                    })
-                    .unwrap();
+                let mut mat: Array1<_> = vec![array![Complex::ONE, Complex::ONE]; num_ctrl_qubits]
+                    .into_iter()
+                    .flatten()
+                    .collect();
                 mat.append(Axis(0), matrix.view()).unwrap();
                 Self::Diagonal(mat.clone())
             }
         }
     }
     /// Create a [`Gate`] from its diagonal elements
+    ///
+    /// # Panics
+    ///
+    /// Panics if the constructed [`Gate`] is not unitary.
     pub fn from_diag<I>(elements: I) -> Self
     where
         I: IntoIterator<Item = Complex>,
@@ -112,7 +129,7 @@ impl Gate {
                 };
                 inv.dot(matrix) == eye
             }
-            Self::Diagonal(matrix) => matrix.iter().all(|c| c.norm() == 1.0),
+            Self::Diagonal(matrix) => matrix.iter().all(|c| (c.norm() - 1.0).abs() < 1e-12),
         }
     }
 }

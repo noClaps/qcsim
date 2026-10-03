@@ -9,6 +9,7 @@ pub struct QuantumCircuit {
 
 impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
+    #[must_use]
     pub fn new(num_qubits: usize) -> Self {
         let mut qubits = Array1::zeros(1 << num_qubits);
         qubits[0] = Complex::new(1.0, 0.0);
@@ -16,6 +17,7 @@ impl QuantumCircuit {
     }
 
     /// Measure the state of the qubits. Consumes the circuit instance.
+    #[must_use]
     pub fn measure(self) -> usize {
         let rand = fastrand::f64_inclusive();
         let mut total = 0.0;
@@ -35,6 +37,10 @@ impl QuantumCircuit {
     }
 
     /// Apply unitary `gate` to `qubits`
+    ///
+    /// # Panics
+    ///
+    /// Panics if the `gate` size does not match the `qubits` size.
     pub fn unitary(&mut self, gate: &Gate, qubits: impl Into<Qubits>) {
         let qubits = match qubits.into() {
             Qubits::Single(q) => {
@@ -217,9 +223,9 @@ impl QuantumCircuit {
     impl_gate!(t, "Single qubit T gate (∜Z).");
     impl_gate!(tdg, "Single qubit T-adjoint gate (T†).");
     impl_gate!(u, theta: f64, phi: f64, lam: f64, "Generic single-qubit rotation in terms of ZYZ Euler angles.");
-    impl_gate!(x, "The single-qubit Pauli-X gate (σ_x).");
-    impl_gate!(y, "The single-qubit Pauli-Y gate (σ_y).");
-    impl_gate!(z, "The single-qubit Pauli-Z gate (σ_z).");
+    impl_gate!(x, "The single-qubit Pauli-X gate (`σ_x`).");
+    impl_gate!(y, "The single-qubit Pauli-Y gate (`σ_y`).");
+    impl_gate!(z, "The single-qubit Pauli-Z gate (`σ_z`).");
 }
 
 /// 2 qubit gates

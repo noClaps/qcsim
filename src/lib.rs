@@ -30,6 +30,11 @@ pub(crate) type StateVector = Array1<Complex>;
 /// // output[0b00] = ~5000
 /// // output[0b10] = ~5000
 /// ```
+///
+/// # Panics
+///
+/// Panics if the total sum of the squared amplitudes of the qubits in `qc` do not equal 1.
+#[must_use]
 pub fn sample(qc: QuantumCircuit, samples: usize) -> HashMap<usize, usize> {
     assert!(
         (qc.qubits.fold(0.0, |acc, q| acc + q.norm_sqr()) - 1.0).abs() < 1e-12,
@@ -45,5 +50,6 @@ pub fn sample(qc: QuantumCircuit, samples: usize) -> HashMap<usize, usize> {
             }
         }
     }
+    drop(qc);
     outputs
 }

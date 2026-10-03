@@ -14,24 +14,30 @@ impl Complex {
     pub const ONE: Self = Self::new(1.0, 0.0);
     pub const I: Self = Self::new(0.0, 1.0);
 
+    #[must_use]
     pub const fn new(re: f64, im: f64) -> Self {
         Self { re, im }
     }
+    #[must_use]
     pub fn cis(phase: f64) -> Self {
         // e^it = cos(t) + i sin(t)
         let (sin, cos) = phase.sin_cos();
         Self::new(cos, sin)
     }
 
+    #[must_use]
     pub const fn norm_sqr(&self) -> f64 {
         self.re * self.re + self.im * self.im
     }
+    #[must_use]
     pub fn norm(&self) -> f64 {
         self.norm_sqr().sqrt()
     }
+    #[must_use]
     pub const fn conj(&self) -> Self {
         Self::new(self.re, -self.im)
     }
+    #[must_use]
     pub fn powi(&self, n: i32) -> Self {
         // z = a+bi = r(cos(t) + i sin(t))
         // a = r cos(t), b = r sin(t)
@@ -45,7 +51,7 @@ impl Complex {
         // z^n = r cis(i nt)
         let r = self.norm();
         let t = self.im.atan2(self.re);
-        Self::cis(n as f64 * t) * r
+        Self::cis(f64::from(n) * t) * r
     }
 }
 
@@ -70,7 +76,7 @@ impl Sub for Complex {
 impl Sub<Complex> for f64 {
     type Output = Complex;
     fn sub(self, rhs: Complex) -> Self::Output {
-        Complex::new(self - rhs.re, rhs.im)
+        Complex::new(self - rhs.re, -rhs.im)
     }
 }
 impl Mul for Complex {
@@ -93,7 +99,7 @@ impl Mul<f64> for Complex {
 }
 impl MulAssign for Complex {
     fn mul_assign(&mut self, rhs: Self) {
-        *self = *self * rhs
+        *self = *self * rhs;
     }
 }
 impl Div for Complex {
