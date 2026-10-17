@@ -7,8 +7,9 @@ jobs:
       - uses: https://code.forgejo.org/actions/checkout@v7
       - uses: https://github.com/dtolnay/rust-toolchain@stable
       - run: cargo doc --no-deps
-      - uses: https://github.com/cloudflare/wrangler-action@v4
+      - uses: https://codeberg.org/git-pages/action@v2
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy target/doc --project-name=qcsim
+          site: https://qcsim.zerolimits.dev/
+          server: codeberg.page
+          token: ${{ forge.token }}
+          source: target/doc/
