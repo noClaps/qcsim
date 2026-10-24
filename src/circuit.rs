@@ -1,4 +1,4 @@
-use crate::{Array1, Complex, Gate, StateVector, qubits::Qubits};
+use crate::{Array1, Complex, Gate, qubits::Qubits, state_vector::StateVector};
 
 /// A quantum circuit
 #[derive(Clone)]
@@ -11,7 +11,7 @@ impl QuantumCircuit {
     /// Initialise a quantum circuit with state |00...0>
     #[must_use]
     pub fn new(num_qubits: usize) -> Self {
-        let mut qubits = Array1::zeros(1 << num_qubits);
+        let mut qubits = StateVector::zeros(1 << num_qubits);
         qubits[0] = Complex::new(1.0, 0.0);
         Self { qubits, num_qubits }
     }
@@ -32,7 +32,7 @@ impl QuantumCircuit {
 
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
-        self.qubits = Array1::zeros(1 << self.num_qubits);
+        self.qubits = StateVector::zeros(1 << self.num_qubits);
         self.qubits[0] = Complex::new(1.0, 0.0);
     }
 

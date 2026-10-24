@@ -2,8 +2,9 @@ mod circuit;
 mod complex;
 mod gate;
 mod qubits;
+mod state_vector;
 #[cfg(test)]
-pub mod tests;
+mod tests;
 
 use std::collections::HashMap;
 
@@ -12,8 +13,6 @@ pub use complex::Complex;
 pub use gate::Gate;
 
 pub use ndarray::{Array1, Array2};
-
-pub(crate) type StateVector = Array1<Complex>;
 
 /// Sample the outcome of the [`QuantumCircuit`] `sample` times. Returns the output as a
 /// [`HashMap`] where the key is the measurement and the value is the number of times it appeared.
@@ -37,7 +36,7 @@ pub(crate) type StateVector = Array1<Complex>;
 #[must_use]
 pub fn sample(qc: QuantumCircuit, samples: usize) -> HashMap<usize, usize> {
     assert!(
-        (qc.qubits.fold(0.0, |acc, q| acc + q.norm_sqr()) - 1.0).abs() < 1e-12,
+        (qc.qubits.iter().fold(0.0, |acc, q| acc + q.norm_sqr()) - 1.0).abs() < 1e-12,
         "Total sum of squared amplitudes does not equal 1"
     );
     let mut outputs = HashMap::new();
