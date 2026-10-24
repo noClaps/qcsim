@@ -10,6 +10,8 @@ num-traits = "0.2.19"
 
 [[example]]
 name = "grover"
+[[example]]
+name = "coin-flip"
 
 [dev-dependencies]
 unicode-plot = "0.1.0"
