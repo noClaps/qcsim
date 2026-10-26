@@ -1,6 +1,6 @@
 use std::{
     ops::{Index, IndexMut},
-    slice::Iter,
+    slice::{Iter, IterMut},
 };
 
 use crate::Complex;
@@ -14,6 +14,9 @@ impl StateVector {
     }
     pub fn iter(&self) -> Iter<'_, Complex> {
         self.0.iter()
+    }
+    pub fn iter_mut(&mut self) -> IterMut<'_, Complex> {
+        self.0.iter_mut()
     }
     pub const fn len(&self) -> usize {
         self.0.len()
@@ -29,5 +32,11 @@ impl Index<usize> for StateVector {
 impl IndexMut<usize> for StateVector {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         self.0.index_mut(index)
+    }
+}
+
+impl FromIterator<Complex> for StateVector {
+    fn from_iter<T: IntoIterator<Item = Complex>>(iter: T) -> Self {
+        Self(Vec::from_iter(iter))
     }
 }

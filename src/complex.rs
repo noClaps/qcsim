@@ -1,5 +1,6 @@
 use std::{
     fmt::Display,
+    iter::Sum,
     ops::{Add, Div, Mul, MulAssign, Neg, Sub},
 };
 
@@ -137,22 +138,8 @@ impl Display for Complex {
     }
 }
 
-impl num_traits::identities::Zero for Complex {
-    fn zero() -> Self {
-        Self::ZERO
-    }
-    fn is_zero(&self) -> bool {
-        self.re.abs() < 1e-12 && self.im.abs() < 1e-12
-    }
-}
-impl num_traits::identities::One for Complex {
-    fn one() -> Self {
-        Self::ONE
-    }
-    fn is_one(&self) -> bool
-    where
-        Self: PartialEq,
-    {
-        (self.re.abs() - 1.0) < 1e-12 && self.im.abs() < 1e-12
+impl Sum for Complex {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Complex::ZERO, |acc, i| acc + i)
     }
 }

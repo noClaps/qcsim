@@ -4,19 +4,20 @@ mod many_qubit;
 mod single_qubit;
 mod two_qubit;
 
-use crate::{Array2, Complex};
-
-use ndarray::{Array1, Axis, array, linalg::kron};
+use crate::{
+    Complex,
+    matrix::{Dot, Matrix, diagonal::DiagonalMatrix, matrix, square::SquareMatrix},
+};
 
 macro_rules! gate {
     ($([$($el:expr),+ $(,)?]),+ $(,)?) => {
-        ndarray::array![
-            $([$(crate::Complex::from($el),)+],)+
+        $crate::matrix::matrix![
+            $([$($crate::Complex::from($el),)+],)+
         ]
     };
     ($($el:expr),+ $(,)?) => {
-        ndarray::array![
-            $(crate::Complex::from($el),)+
+        $crate::matrix::matrix![
+            $($crate::Complex::from($el),)+
         ]
     };
 }
@@ -24,8 +25,8 @@ pub(crate) use gate;
 
 /// A quantum gate
 pub enum Gate {
-    Normal(Array2<Complex>),
-    Diagonal(Array1<Complex>),
+    Normal(SquareMatrix),
+    Diagonal(DiagonalMatrix),
 }
 
 impl Gate {
@@ -37,13 +38,12 @@ impl Gate {
     /// - Panics if `matrix` order is not a power of 2.
     /// - Panics if `matrix` is not unitary.
     #[must_use]
-    pub fn new(matrix: Array2<Complex>) -> Self {
-        assert!(matrix.is_square(), "Gate matrix is not square");
+    pub fn new(matrix: SquareMatrix) -> Self {
         assert!(
-            matrix.nrows().is_power_of_two(),
+            matrix.size().is_power_of_two(),
             "Gate matrix order is not a power of 2"
         );
-        let gate = if is_diagonal(&matrix) {
+        let gate = if matrix.is_diagonal() {
             Self::Diagonal(matrix.into_diag())
         } else {
             Self::Normal(matrix)
@@ -62,7 +62,6 @@ impl Gate {
         match self {
             Self::Normal(matrix) => {
                 let matrix = matrix.t().map(Complex::conj);
-                assert!(matrix.is_square(), "Inverse matrix is not square");
                 Self::Normal(matrix)
             }
             Self::Diagonal(matrix) => Self::Diagonal(matrix.map(Complex::conj)),
@@ -77,31 +76,30 @@ impl Gate {
     pub fn control(&self, num_ctrl_qubits: usize) -> Self {
         match self {
             Self::Normal(matrix) => {
-                let mut lhs = array![
+                let mut lhs = matrix![
                     [Complex::ONE, Complex::ZERO],
                     [Complex::ZERO, Complex::ZERO]
                 ];
                 for _ in 0..num_ctrl_qubits {
-                    lhs = kron(&lhs, &Array2::eye(2));
+                    lhs = lhs.kron(&SquareMatrix::eye(2));
                 }
                 let mut rhs = matrix.clone();
                 for _ in 0..num_ctrl_qubits {
-                    rhs = kron(
-                        &array![
-                            [Complex::ZERO, Complex::ZERO],
-                            [Complex::ZERO, Complex::ONE]
-                        ],
-                        &rhs,
-                    );
+                    rhs = matrix![
+                        [Complex::ZERO, Complex::ZERO],
+                        [Complex::ZERO, Complex::ONE]
+                    ]
+                    .kron(&rhs);
                 }
                 Gate::Normal(lhs + rhs)
             }
             Self::Diagonal(matrix) => {
-                let mut mat: Array1<_> = vec![array![Complex::ONE, Complex::ONE]; num_ctrl_qubits]
-                    .into_iter()
-                    .flatten()
-                    .collect();
-                mat.append(Axis(0), matrix.view()).unwrap();
+                let mut mat: DiagonalMatrix =
+                    vec![matrix![Complex::ONE, Complex::ONE]; num_ctrl_qubits]
+                        .into_iter()
+                        .flatten()
+                        .collect();
+                mat.append(matrix);
                 Self::Diagonal(mat.clone())
             }
         }
@@ -115,7 +113,7 @@ impl Gate {
     where
         I: IntoIterator<Item = Complex>,
     {
-        let gate = Self::Diagonal(Array1::from_iter(elements));
+        let gate = Self::Diagonal(DiagonalMatrix::from_iter(elements));
         assert!(gate.is_unitary(), "Gate is not unitary");
         gate
     }
@@ -123,7 +121,7 @@ impl Gate {
     fn is_unitary(&self) -> bool {
         match self {
             Self::Normal(matrix) => {
-                let eye = Array2::eye(matrix.nrows());
+                let eye = SquareMatrix::eye(matrix.size());
                 let Self::Normal(inv) = self.inverse() else {
                     unreachable!()
                 };
@@ -132,16 +130,4 @@ impl Gate {
             Self::Diagonal(matrix) => matrix.iter().all(|c| (c.norm() - 1.0).abs() < 1e-12),
         }
     }
-}
-
-fn is_diagonal(matrix: &Array2<Complex>) -> bool {
-    let size = matrix.nrows();
-    for i in 0..size {
-        for j in 0..size {
-            if i != j && matrix[(i, j)] != Complex::ZERO {
-                return false;
-            }
-        }
-    }
-    true
 }

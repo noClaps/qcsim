@@ -1,6 +1,6 @@
 use std::{f64::consts::PI, io::stdout};
 
-use qcsim::{Array2, Complex, Gate, QuantumCircuit, sample};
+use qcsim::{Complex, Gate, Matrix, QuantumCircuit, SquareMatrix, sample};
 use unicode_plot::barplot;
 
 fn main() {
@@ -15,9 +15,9 @@ fn main() {
     let u_omega = Gate::from_diag(
         (0..1 << num_qubits).map(|i| Complex::new(-1.0, 0.0).powi(check(i) as i32)),
     );
-    let mut u_s = Array2::zeros((1 << num_qubits, 1 << num_qubits));
+    let mut u_s = SquareMatrix::zeros(1 << num_qubits);
     u_s[(0, 0)] = Complex::new(1.0, 0.0);
-    u_s = u_s * 2.0 - Array2::<Complex>::eye(1 << num_qubits);
+    u_s = u_s * 2.0 - SquareMatrix::eye(1 << num_qubits);
     let u_s = Gate::new(u_s);
 
     let mut qc = QuantumCircuit::new(num_qubits);

@@ -1,4 +1,9 @@
-use crate::{Array1, Complex, Gate, qubits::Qubits, state_vector::StateVector};
+use crate::{
+    Complex, Gate,
+    matrix::{Dot, Matrix},
+    qubits::Qubits,
+    state_vector::StateVector,
+};
 
 /// A quantum circuit
 #[derive(Clone)]
@@ -61,13 +66,13 @@ impl QuantumCircuit {
         assert_eq!(
             qubits.len(),
             match gate {
-                Gate::Normal(matrix) => matrix.nrows().ilog2(),
-                Gate::Diagonal(matrix) => matrix.len().ilog2(),
+                Gate::Normal(matrix) => matrix.size().ilog2(),
+                Gate::Diagonal(matrix) => matrix.size().ilog2(),
             } as usize,
             "Cannot apply {}-qubit gate to {} qubits",
             match gate {
-                Gate::Normal(matrix) => matrix.nrows().ilog2(),
-                Gate::Diagonal(matrix) => matrix.len().ilog2(),
+                Gate::Normal(matrix) => matrix.size().ilog2(),
+                Gate::Diagonal(matrix) => matrix.size().ilog2(),
             },
             qubits.len()
         );
@@ -101,7 +106,7 @@ impl QuantumCircuit {
                     // create input from qubits at `indices`
                     // indices = [000, 001, 100, 101] -> input = [A_000, A_001, A_100, A_101]
                     // where A_000 is the amplitude for qubit |000>
-                    let input = Array1::from_iter(indices.clone().map(|i| self.qubits[i]));
+                    let input = StateVector::from_iter(indices.clone().map(|i| self.qubits[i]));
                     // apply gate
                     let output = matrix.dot(&input);
                     // write output back into qubits
@@ -136,10 +141,10 @@ impl QuantumCircuit {
         match gate {
             Gate::Normal(matrix) => {
                 assert_eq!(
-                    matrix.nrows(),
+                    matrix.size(),
                     2,
                     "Cannot apply {}-qubit gate to 1 qubit",
-                    matrix.nrows().ilog2()
+                    matrix.size().ilog2()
                 );
                 let g00 = matrix[(0, 0)];
                 let g01 = matrix[(0, 1)];
@@ -161,10 +166,10 @@ impl QuantumCircuit {
             }
             Gate::Diagonal(matrix) => {
                 assert_eq!(
-                    matrix.len(),
+                    matrix.size(),
                     2,
                     "Cannot apply {}-qubit gate to 1 qubit",
-                    matrix.len().ilog2()
+                    matrix.size().ilog2()
                 );
                 let d0 = matrix[0];
                 let d1 = matrix[1];
