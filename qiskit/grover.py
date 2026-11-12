@@ -10,7 +10,7 @@ def check(x: int):
     return secret_val == x
 
 
-num_qubits = int(np.round(np.log2(secret_val) + 1))
+num_qubits = int(np.log2(secret_val)) + 1
 print(f"num qubits: {num_qubits}")
 iterations = int(np.ceil(np.pi / 4 * np.sqrt(num_qubits)))
 print(f"iterations: {iterations}")
