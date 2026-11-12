@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use qcsim::{Complex, Gate, Matrix, QuantumCircuit, SquareMatrix, sample};
+use qcsim::{Complex, Gate, QuantumCircuit, sample};
 
 fn main() {
     let secret_val = (1 << 15) - 1;
@@ -14,10 +14,9 @@ fn main() {
     let u_omega = Gate::from_diag(
         (0..1 << num_qubits).map(|i| Complex::new(-1.0, 0.0).powi(check(i) as i32)),
     );
-    let mut u_s = SquareMatrix::zeros(1 << num_qubits);
-    u_s[(0, 0)] = Complex::new(1.0, 0.0);
-    u_s = u_s * 2.0 - SquareMatrix::eye(1 << num_qubits);
-    let u_s = Gate::new(u_s);
+    let mut u_s = vec![-Complex::ONE; 1 << num_qubits];
+    u_s[0] = Complex::ONE;
+    let u_s = Gate::from_diag(u_s);
 
     let mut qc = QuantumCircuit::new(num_qubits);
     qc.h(0..num_qubits);
