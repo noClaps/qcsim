@@ -1,7 +1,6 @@
-use std::{f64::consts::PI, io::stdout};
+use std::f64::consts::PI;
 
 use qcsim::{Complex, Gate, Matrix, QuantumCircuit, SquareMatrix, sample};
-use unicode_plot::barplot;
 
 fn main() {
     let secret_val = (1 << 15) - 1;
@@ -35,14 +34,5 @@ fn main() {
         check(val),
         "Grover's algorithm failed! Expected: {secret_val}, received: {val}",
     );
-
-    let plot = barplot(
-        &data.keys().collect::<Vec<_>>(),
-        &data.values().collect::<Vec<_>>(),
-        Default::default(),
-    )
-    .unwrap();
-    plot.render_with_mode_auto(&mut stdout(), Default::default())
-        .unwrap();
     println!("val: {val}");
 }

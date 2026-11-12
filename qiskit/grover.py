@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import UnitaryGate
@@ -39,9 +38,3 @@ val = max(data.items(), key=lambda item: item[1])[0]
 
 assert check(val), f"Grover's algorithm failed! Expected: {secret_val}, received: {val}"
 print(f"val: {val}")
-
-plt.bar(list(data.keys()), list(data.values()))
-plt.xlabel("Index")
-plt.ylabel("Counts")
-plt.tight_layout()
-plt.show()
