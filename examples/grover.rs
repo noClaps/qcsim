@@ -8,7 +8,7 @@ fn main() {
 
     let num_qubits = (secret_val.ilog2() + 1) as usize;
     println!("num qubits: {num_qubits}");
-    let iterations = (PI / 4.0 * (num_qubits as f64).sqrt()).ceil() as usize;
+    let iterations = (PI / 4.0 * (2.0f64.powi(num_qubits as i32)).sqrt()).ceil() as usize;
     println!("iterations: {iterations}");
 
     let u_omega = Gate::from_diag(
