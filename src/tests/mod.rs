@@ -38,7 +38,6 @@ fn readme_example() {
     qc.h(0);
     qc.cx(0, 1);
     qc.ccx(0, 1, 2);
-    println!("{}", qc.clone().measure());
     let output = sample(qc, 10000);
     println!("{:?}", output);
 }

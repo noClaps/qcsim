@@ -35,19 +35,21 @@ pub use matrix::{Matrix, diagonal::DiagonalMatrix, square::SquareMatrix};
 /// Panics if the total sum of the squared amplitudes of the qubits in `qc` do not equal 1.
 #[must_use]
 pub fn sample(qc: QuantumCircuit, samples: usize) -> HashMap<usize, usize> {
+    let mut cdf = Vec::with_capacity(qc.qubits.len());
+    let mut total = 0.0;
+    for amp in qc.qubits.iter() {
+        total += amp.norm_sqr();
+        cdf.push(total);
+    }
     assert!(
-        (qc.qubits.iter().fold(0.0, |acc, q| acc + q.norm_sqr()) - 1.0).abs() < 1e-12,
+        (total - 1.0).abs() < 1e-11,
         "Total sum of squared amplitudes does not equal 1"
     );
     let mut outputs = HashMap::new();
     for _ in 0..samples {
-        let measurement = qc.clone().measure();
-        match outputs.get_mut(&measurement) {
-            Some(c) => *c += 1,
-            None => {
-                outputs.insert(measurement, 1);
-            }
-        }
+        let r = fastrand::f64();
+        let idx = cdf.partition_point(|&c| c <= r).min(cdf.len() - 1);
+        *outputs.entry(idx).or_insert(0) += 1;
     }
     drop(qc);
     outputs

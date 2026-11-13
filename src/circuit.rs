@@ -21,20 +21,6 @@ impl QuantumCircuit {
         Self { qubits, num_qubits }
     }
 
-    /// Measure the state of the qubits. Consumes the circuit instance.
-    #[must_use]
-    pub fn measure(self) -> usize {
-        let rand = fastrand::f64_inclusive();
-        let mut total = 0.0;
-        for (i, state) in self.qubits.iter().enumerate() {
-            total += state.norm_sqr();
-            if total >= rand {
-                return i;
-            }
-        }
-        self.qubits.len() - 1
-    }
-
     /// Reset the qubits to the |00...0> state
     pub fn reset(&mut self) {
         self.qubits = StateVector::zeros(1 << self.num_qubits);
