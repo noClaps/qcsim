@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use qcsim::{Complex, Gate, QuantumCircuit, sample};
 
 fn main() {
-    let secret_val = (1 << 15) - 1;
+    let secret_val = (1 << 18) - 1;
     let check = |x: usize| secret_val == x;
 
     let num_qubits = (secret_val.ilog2() + 1) as usize;

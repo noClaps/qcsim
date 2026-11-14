@@ -61,7 +61,7 @@ Run details:
 
 - 10000 shots with the sampler
 - Python version 3.15.2
-- Rust version 1.99.1
+- Rust version 1.100.0
 - Dependency versions are listed in [`uv.lock`](./qiskit/uv.lock) and [`Cargo.lock`](./Cargo.lock).
 
 ### Grover search
@@ -81,15 +81,15 @@ Ran with:
 hyperfine ./target/release/examples/grover 'uv run qiskit/grover.py' --warmup=10
 ```
 
-|           | QCSim              | Qiskit                |
-| --------- | ------------------ | --------------------- |
-| 12 qubits | 56.9 ms (2.1 MiB)  | 424.5 ms (112.8 MiB)  |
-| 13 qubits | 134.3 ms (2.4 MiB) | 742.0 ms (162.6 MiB)  |
-| 14 qubits | 274.3 ms (2.9 MiB) | 1558.8 ms (299.0 MiB) |
-| 15 qubits | 614.5 ms (3.9 MiB) | 3784.5 ms (673.7 MiB) |
-| 16 qubits | 1.442 s (6.1 MiB)  | 10.117 s (1923.5 MiB) |
-| 17 qubits | 3.584 s (10.3 MiB) | 28.451 s (4489.6 MiB) |
-| 18 qubits | 9.313 s (17.9 MiB) | 82.591 s (5425.7 MiB) |
+|           | QCSim              | Qiskit                  |
+| --------- | ------------------ | ----------------------- |
+| 12 qubits | 10.8 ms (2.1 MiB)  | 428.2 ms (112.5 MiB)    |
+| 13 qubits | 29.3 (2.3 MiB)     | 726.6 ms (162.5 MiB)    |
+| 14 qubits | 83.9 ms (2.8 MiB)  | 1562.1 ms (298.9 MiB)   |
+| 15 qubits | 247.3 ms (3.6 MiB) | 3786.6 ms (673.7 MiB)   |
+| 16 qubits | 720.5 ms (5.4 MiB) | 10124.0 ms (1923.3 MiB) |
+| 17 qubits | 2.146 s (8.9 MiB)  | 28.623 s (4525.0 MiB)   |
+| 18 qubits | 6.385 s (15.9 MiB) | 82.216 s (5435.5 MiB)   |
 
 > [!note]
 > Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to $2^2 \times 2^2 = 16 \to $2^3 \times 2^3 = 64$).

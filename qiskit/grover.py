@@ -3,7 +3,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import DiagonalGate
 from qiskit_aer.primitives import SamplerV2
 
-secret_val = (1 << 12) - 1
+secret_val = (1 << 18) - 1
 
 
 def check(x: int):
@@ -12,7 +12,7 @@ def check(x: int):
 
 num_qubits = int(np.log2(secret_val)) + 1
 print(f"num qubits: {num_qubits}")
-iterations = int(np.ceil(np.pi / 4 * np.sqrt(num_qubits)))
+iterations = int(np.ceil(np.pi / 4 * np.sqrt(2**num_qubits)))
 print(f"iterations: {iterations}")
 
 u_omega = DiagonalGate([(-1) ** check(i) for i in range(1 << num_qubits)])
