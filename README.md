@@ -92,7 +92,7 @@ hyperfine ./target/release/examples/grover 'uv run qiskit/grover.py' --warmup=10
 | 18 qubits | 6.385 s (15.9 MiB) | 82.216 s (5435.5 MiB)   |
 
 > [!note]
-> Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to $2^2 \times 2^2 = 16 \to $2^3 \times 2^3 = 64$).
+> Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to 2^2 \times 2^2 = 16 \to 2^3 \times 2^3 = 64$).
 
 ### Coin flip
 
