@@ -81,6 +81,16 @@ impl QuantumCircuit {
             .iter()
             .fold(0, |acc, &q| acc | (1 << bit_position(q)));
 
+        let offsets: Vec<_> = (0..local_dim)
+            .map(|local_index| {
+                let mut g = 0;
+                for (j, &qubit) in qubits.iter().enumerate() {
+                    g |= ((local_index >> (k - 1 - j)) & 1) << bit_position(qubit);
+                }
+                g
+            })
+            .collect();
+
         for base in 0..state_len {
             // isolate all of the qubits that will remain unchanged.
             // e.g. CNOT(0,2) -> qubit 1 is unchanged
@@ -116,17 +126,8 @@ impl QuantumCircuit {
                     }
                 }
                 Gate::Diagonal(matrix) => {
-                    for local_index in 0..local_dim {
-                        let mut global_index = base;
-
-                        for (j, &qubit) in qubits.iter().enumerate() {
-                            let local_bit = (local_index >> (k - 1 - j)) & 1;
-                            let global_bit = bit_position(qubit);
-
-                            global_index |= local_bit << global_bit;
-                        }
-
-                        self.qubits[global_index] *= matrix[local_index];
+                    for (local_index, &offset) in offsets.iter().enumerate() {
+                        self.qubits[base | offset] = matrix[local_index];
                     }
                 }
             }
