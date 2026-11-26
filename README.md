@@ -64,22 +64,12 @@ Run details:
 - Rust version 1.100.0
 - Dependency versions are listed in [`uv.lock`](./qiskit/uv.lock) and [`Cargo.lock`](./Cargo.lock).
 
+Benchmarking script: [`bench.py`](./bench.py)
+
 ### Grover search
 
 - [QCSim](./examples/grover.rs)
 - [Qiskit](./qiskit/grover.py), uses Qiskit Aer `SamplerV2`
-
-Compiled with:
-
-```sh
-cargo build --release --example grover
-```
-
-Ran with:
-
-```sh
-hyperfine ./target/release/examples/grover 'uv run qiskit/grover.py' --warmup=10
-```
 
 |           | QCSim                | Qiskit                |
 | --------- | -------------------- | --------------------- |
@@ -98,18 +88,6 @@ hyperfine ./target/release/examples/grover 'uv run qiskit/grover.py' --warmup=10
 
 - [QCSim](./examples/coin-flip.rs)
 - [Qiskit](./qiskit/coin-flip.py), uses Qiskit `StatevectorSampler`
-
-Compiled with:
-
-```sh
-cargo build --release --example coin-flip
-```
-
-Ran with:
-
-```sh
-hyperfine ./target/release/examples/coin-flip 'uv run qiskit/coin-flip.py' --warmup=20
-```
 
 | QCSim            | Qiskit              |
 | ---------------- | ------------------- |
