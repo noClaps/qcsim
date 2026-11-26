@@ -63,6 +63,19 @@ impl QuantumCircuit {
             qubits.len()
         );
 
+        if let Gate::Diagonal(matrix) = gate
+            // check if number of qubits being applied == number of qubits in circuit
+            && k == n
+            // check if all qubits in order
+            && qubits.iter().enumerate().all(|(i, &q)| i == q)
+        {
+            // multiply the matrix elements directly with state vector
+            for (a, d) in self.qubits.iter_mut().zip(matrix.iter()) {
+                *a *= *d
+            }
+            return;
+        }
+
         let bit_position = |q: usize| -> usize { n - 1 - q };
         let target_mask = qubits
             .iter()

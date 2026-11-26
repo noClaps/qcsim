@@ -53,3 +53,26 @@ repeat N times:
 ```
 
 This brings down the complexity to $O(2^n + N \times n)$, with the $2^n$ coming from the `for i in state_vector` loop, and the $N \times n$ coming from the `repeat N times` loop and the `binary_search` inside. Of course, this is far better than $O(N \times 2^n)$.
+
+## Ordered qubits
+
+In `QuantumCircuit::unitary`, if all of the qubits being acted upon are in order and match the size of the state vector, and the matrix is diagonal, then we can simply apply the matrix element-by-element to the state vector.
+
+$$
+\begin{aligned}
+V & = \begin{pmatrix}
+a \\
+b
+\end{pmatrix} \\
+M & = \begin{pmatrix}
+x & 0 \\
+0 & y
+\end{pmatrix} \\
+MV & = \begin{pmatrix}
+ax \\
+by
+\end{pmatrix}
+\end{aligned}
+$$
+
+This brought the QCSim Grover example timing down from 6.3 s to 4.8 s for 18 qubits.

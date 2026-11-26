@@ -81,15 +81,15 @@ Ran with:
 hyperfine ./target/release/examples/grover 'uv run qiskit/grover.py' --warmup=10
 ```
 
-|           | QCSim              | Qiskit                  |
-| --------- | ------------------ | ----------------------- |
-| 12 qubits | 10.8 ms (2.1 MiB)  | 428.2 ms (112.5 MiB)    |
-| 13 qubits | 29.3 (2.3 MiB)     | 726.6 ms (162.5 MiB)    |
-| 14 qubits | 83.9 ms (2.8 MiB)  | 1562.1 ms (298.9 MiB)   |
-| 15 qubits | 247.3 ms (3.6 MiB) | 3786.6 ms (673.7 MiB)   |
-| 16 qubits | 720.5 ms (5.4 MiB) | 10124.0 ms (1923.3 MiB) |
-| 17 qubits | 2.146 s (8.9 MiB)  | 28.623 s (4525.0 MiB)   |
-| 18 qubits | 6.385 s (15.9 MiB) | 82.216 s (5435.5 MiB)   |
+|           | QCSim                | Qiskit                |
+| --------- | -------------------- | --------------------- |
+| 12 qubits | 8.4 ms (2.1 MiB)     | 427.6 ms (112.7 MiB)  |
+| 13 qubits | 22.4 ms (2.3 MiB)    | 737.4 ms (162.6 MiB)  |
+| 14 qubits | 63.7 ms (2.8 MiB)    | 1559.1 ms (299.0 MiB) |
+| 15 qubits | 185.2 ms (3.6 MiB)   | 3779.8 ms (673.9 MiB) |
+| 16 qubits | 548.3 ms (5.4 MiB)   | 10.1 s (1923.5 MiB)   |
+| 17 qubits | 1624.9 ms (8.9 MiB)  | 28.7 s (4452.1 MiB)   |
+| 18 qubits | 4827.8 ms (15.9 MiB) | 83.3 s (5308.6 MiB)   |
 
 > [!note]
 > Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to 2^2 \times 2^2 = 16 \to 2^3 \times 2^3 = 64$).
@@ -113,7 +113,7 @@ hyperfine ./target/release/examples/coin-flip 'uv run qiskit/coin-flip.py' --war
 
 | QCSim            | Qiskit              |
 | ---------------- | ------------------- |
-| 1.9 ms (1.8 MiB) | 221.5 ms (75.8 MiB) |
+| 1.6 ms (1.8 MiB) | 224.9 ms (75.9 MiB) |
 
 ### Analysis
 
