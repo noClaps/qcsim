@@ -1,14 +1,10 @@
 on: [push, workflow_dispatch]
 
-env:
-  CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-Dwarnings"
-
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo clippy
+      - run: cargo clippy -- -D warnings
       - run: cargo test
