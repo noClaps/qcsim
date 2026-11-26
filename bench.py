@@ -8,7 +8,7 @@ from subprocess import run
 
 def cargo_build(name):
     run(
-        ["cargo", "build", "--release", "example", name],
+        ["cargo", "build", "--release", "--example", name],
         check=True,
         capture_output=True,
     )
@@ -31,8 +31,12 @@ def hyperfine(name, warmup=10):
     return results
 
 
+def print_heading(heading):
+    print(f"\x1b[1;4m=== {heading} ===\x1b[0m")
+
+
 if "grover" in sys.argv or len(sys.argv) == 1:
-    print("grover")
+    print_heading("grover")
     prev = 18
     qcsim = Path("examples/grover.rs")
     qiskit = Path("qiskit/grover.py")
@@ -57,7 +61,7 @@ if "grover" in sys.argv or len(sys.argv) == 1:
         print()
 
 if "coin-flip" in sys.argv or len(sys.argv) == 1:
-    print("coin-flip")
+    print_heading("coin-flip")
     print("| QCSim | Qiskit |")
     print("| ----- | ------ |")
     print("|", end="")
