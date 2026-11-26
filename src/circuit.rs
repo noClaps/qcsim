@@ -71,7 +71,7 @@ impl QuantumCircuit {
         {
             // multiply the matrix elements directly with state vector
             for (a, d) in self.qubits.iter_mut().zip(matrix.iter()) {
-                *a *= *d
+                *a *= *d;
             }
             return;
         }
