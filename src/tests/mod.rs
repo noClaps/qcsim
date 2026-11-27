@@ -30,7 +30,7 @@ macro_rules! assert_qc {
 }
 pub(crate) use assert_qc;
 
-use crate::{QuantumCircuit, sample};
+use crate::{Complex, Gate, QuantumCircuit, sample};
 
 #[test]
 fn readme_example() {
@@ -40,4 +40,17 @@ fn readme_example() {
     qc.ccx(0, 1, 2);
     let output = sample(qc, 10000);
     println!("{:?}", output);
+}
+
+#[test]
+fn diagonal_on_partial_register() {
+    let mut qc = QuantumCircuit::new(3);
+    qc.h(0..3);
+    let cz = Gate::from_diag([Complex::ONE, Complex::ONE, Complex::ONE, -Complex::ONE]);
+    qc.unitary(&cz, &[0, 1]); // flips the sign of |11x>
+    let a = std::f64::consts::FRAC_1_SQRT_2 / 2.0;
+    assert_qc!(qc, {
+        0b000 => a, 0b001 => a, 0b010 => a, 0b011 => a,
+        0b100 => a, 0b101 => a, 0b110 => -a, 0b111 => -a,
+    });
 }

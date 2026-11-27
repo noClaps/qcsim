@@ -127,7 +127,7 @@ impl QuantumCircuit {
                 }
                 Gate::Diagonal(matrix) => {
                     for (local_index, &offset) in offsets.iter().enumerate() {
-                        self.qubits[base | offset] = matrix[local_index];
+                        self.qubits[base | offset] *= matrix[local_index];
                     }
                 }
             }
