@@ -151,16 +151,12 @@ impl QuantumCircuit {
                 let g10 = matrix[(1, 0)];
                 let g11 = matrix[(1, 1)];
 
-                for block_start in (0..self.qubits.len()).step_by(block_size) {
-                    for offset in 0..mask {
-                        let i0 = block_start + offset;
-                        let i1 = i0 + mask;
-
-                        let a0 = self.qubits[i0];
-                        let a1 = self.qubits[i1];
-
-                        self.qubits[i0] = g00 * a0 + g01 * a1;
-                        self.qubits[i1] = g10 * a0 + g11 * a1;
+                for block in self.qubits.as_mut_slice().chunks_exact_mut(block_size) {
+                    let (lo, hi) = block.split_at_mut(mask);
+                    for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
+                        let (a0, a1) = (*x0, *x1);
+                        *x0 = g00 * a0 + g01 * a1;
+                        *x1 = g10 * a0 + g11 * a1;
                     }
                 }
             }
@@ -174,13 +170,11 @@ impl QuantumCircuit {
                 let d0 = matrix[0];
                 let d1 = matrix[1];
 
-                for block_start in (0..self.qubits.len()).step_by(block_size) {
-                    for offset in 0..mask {
-                        let i0 = block_start + offset;
-                        let i1 = i0 + mask;
-
-                        self.qubits[i0] *= d0;
-                        self.qubits[i1] *= d1;
+                for block in self.qubits.as_mut_slice().chunks_exact_mut(block_size) {
+                    let (lo, hi) = block.split_at_mut(mask);
+                    for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
+                        *x0 *= d0;
+                        *x1 *= d1;
                     }
                 }
             }

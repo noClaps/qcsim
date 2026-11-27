@@ -83,13 +83,17 @@ impl Sub<Complex> for f64 {
 impl Mul for Complex {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        // (a+bi) * (c+di)
-        // = ac + adi + bci - bd
-        // = (ac-bd) + (ad+bc)i
-        Self::new(
-            self.re * rhs.re - self.im * rhs.im,
-            self.re * rhs.im + self.im * rhs.re,
-        )
+        match (self.im, rhs.im) {
+            (0.0, _) => rhs * self.re,
+            (_, 0.0) => self * rhs.re,
+            // (a+bi) * (c+di)
+            // = ac + adi + bci - bd
+            // = (ac-bd) + (ad+bc)i
+            _ => Self::new(
+                self.re * rhs.re - self.im * rhs.im,
+                self.re * rhs.im + self.im * rhs.re,
+            ),
+        }
     }
 }
 impl Mul<f64> for Complex {

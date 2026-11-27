@@ -76,3 +76,27 @@ by
 $$
 
 This brought the QCSim Grover example timing down from 6.3 s to 4.8 s for 18 qubits.
+
+## Complex multiplication fast path
+
+When multiplying two complex numbers, it normally requires 4 multiplications and 2 additions:
+
+$$
+\begin{aligned}
+z_1 & = a + bi \\
+z_2 & = c + di \\
+z_1 z_2 & = (ac - bd) + (ad + cb)i
+\end{aligned}
+$$
+
+However, if the real or imaginary component are zero, then that simplifies down to just two multiplications:
+
+$$
+\begin{aligned}
+z & = a + bi \\
+zr & = ar + bri \text{ where } r \in \mathbb{R} \\
+z (ci) & = -bc + aci
+\end{aligned}
+$$
+
+This sped up the QCSim Grover example for 18 qubits from about 4.8 s to about 3.3 s.

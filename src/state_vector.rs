@@ -21,6 +21,9 @@ impl StateVector {
     pub const fn len(&self) -> usize {
         self.0.len()
     }
+    pub fn as_mut_slice(&mut self) -> &mut [Complex] {
+        &mut self.0
+    }
 }
 
 impl Index<usize> for StateVector {
