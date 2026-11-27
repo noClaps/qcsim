@@ -14,8 +14,9 @@ pub struct DiagonalMatrix {
 
 impl DiagonalMatrix {
     pub fn append(&mut self, rhs: &Self) {
-        let elems: Vec<_> = self.elems.iter().chain(rhs.elems.iter()).copied().collect();
+        let elems: Vec<_> = self.iter().chain(rhs.iter()).copied().collect();
         self.elems = elems;
+        self.size += rhs.size;
     }
     pub fn iter(&self) -> Iter<'_, Complex> {
         self.elems.iter()
