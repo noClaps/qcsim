@@ -23,6 +23,7 @@ impl DiagonalMatrix {
     pub fn iter(&self) -> Iter<'_, Complex> {
         self.elems.iter()
     }
+    #[must_use]
     pub fn par_iter(&self) -> rayon::slice::Iter<'_, Complex> {
         self.elems.par_iter()
     }
