@@ -71,15 +71,15 @@ Benchmarking script: [`bench.py`](./bench.py)
 - [QCSim](./examples/grover.rs)
 - [Qiskit](./qiskit/grover.py), uses Qiskit Aer `SamplerV2`
 
-|           | QCSim                | Qiskit                 |
-| --------- | -------------------- | ---------------------- |
-| 12 qubits | 6.2 ms (2.1 MiB)     | 430.8 ms (112.7 MiB)   |
-| 13 qubits | 15.6 ms (2.3 MiB)    | 730.8 ms (162.6 MiB)   |
-| 14 qubits | 42.6 ms (2.8 MiB)    | 1552.5 ms (299.0 MiB)  |
-| 15 qubits | 124.8 ms (3.6 MiB)   | 3712.1 ms (674.0 MiB)  |
-| 16 qubits | 360.7 ms (5.4 MiB)   | 9977.3 ms (1923.6 MiB) |
-| 17 qubits | 1079.0 ms (8.9 MiB)  | 28.1 s (4896.1 MiB)    |
-| 18 qubits | 3273.3 ms (15.9 MiB) | 88.0 s (5027.0 MiB)    |
+|           | QCSim                | Qiskit                |
+| --------- | -------------------- | --------------------- |
+| 12 qubits | 31.2 ms (2.5 MiB)    | 426.8 ms (112.7 MiB)  |
+| 13 qubits | 53.8 ms (2.8 MiB)    | 715.8 ms (162.6 MiB)  |
+| 14 qubits | 93.9 ms (3.2 MiB)    | 1547.0 ms (299.1 MiB) |
+| 15 qubits | 164.6 ms (4.1 MiB)   | 3720.4 ms (674.1 MiB) |
+| 16 qubits | 339.4 ms (5.9 MiB)   | 10.1 s (1923.5 MiB)   |
+| 17 qubits | 640.2 ms (9.4 MiB)   | 28.3 s (4740.5 MiB)   |
+| 18 qubits | 1588.1 ms (16.4 MiB) | 81.6 s (5222.4 MiB)   |
 
 > [!note]
 > Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to 2^2 \times 2^2 = 16 \to 2^3 \times 2^3 = 64$).
@@ -91,7 +91,7 @@ Benchmarking script: [`bench.py`](./bench.py)
 
 | QCSim            | Qiskit              |
 | ---------------- | ------------------- |
-| 1.6 ms (1.8 MiB) | 216.9 ms (76.0 MiB) |
+| 1.8 ms (2.2 MiB) | 215.6 ms (76.0 MiB) |
 
 ### Analysis
 

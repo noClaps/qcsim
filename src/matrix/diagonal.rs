@@ -4,6 +4,8 @@ use std::{
     vec::IntoIter,
 };
 
+use rayon::iter::IntoParallelRefIterator;
+
 use crate::{Complex, matrix::Matrix};
 
 #[derive(Clone, PartialEq)]
@@ -20,6 +22,9 @@ impl DiagonalMatrix {
     }
     pub fn iter(&self) -> Iter<'_, Complex> {
         self.elems.iter()
+    }
+    pub fn par_iter(&self) -> rayon::slice::Iter<'_, Complex> {
+        self.elems.par_iter()
     }
 }
 

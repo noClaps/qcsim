@@ -1,3 +1,8 @@
+use rayon::{
+    iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator},
+    slice::ParallelSliceMut,
+};
+
 use crate::{
     Complex, Gate,
     matrix::{Dot, Matrix},
@@ -70,9 +75,12 @@ impl QuantumCircuit {
             && qubits.iter().enumerate().all(|(i, &q)| i == q)
         {
             // multiply the matrix elements directly with state vector
-            for (a, d) in self.qubits.iter_mut().zip(matrix.iter()) {
-                *a *= *d;
-            }
+            self.qubits
+                .as_mut_slice()
+                .par_iter_mut()
+                .zip(matrix.par_iter())
+                .with_min_len(4096)
+                .for_each(|(a, d)| *a *= *d);
             return;
         }
 
@@ -151,14 +159,17 @@ impl QuantumCircuit {
                 let g10 = matrix[(1, 0)];
                 let g11 = matrix[(1, 1)];
 
-                for block in self.qubits.as_mut_slice().chunks_exact_mut(block_size) {
-                    let (lo, hi) = block.split_at_mut(mask);
-                    for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
-                        let (a0, a1) = (*x0, *x1);
-                        *x0 = g00 * a0 + g01 * a1;
-                        *x1 = g10 * a0 + g11 * a1;
-                    }
-                }
+                self.qubits
+                    .as_mut_slice()
+                    .par_chunks_exact_mut(block_size)
+                    .for_each(|block| {
+                        let (lo, hi) = block.split_at_mut(mask);
+                        for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
+                            let (a0, a1) = (*x0, *x1);
+                            *x0 = g00 * a0 + g01 * a1;
+                            *x1 = g10 * a0 + g11 * a1;
+                        }
+                    });
             }
             Gate::Diagonal(matrix) => {
                 assert_eq!(
@@ -170,13 +181,16 @@ impl QuantumCircuit {
                 let d0 = matrix[0];
                 let d1 = matrix[1];
 
-                for block in self.qubits.as_mut_slice().chunks_exact_mut(block_size) {
-                    let (lo, hi) = block.split_at_mut(mask);
-                    for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
-                        *x0 *= d0;
-                        *x1 *= d1;
-                    }
-                }
+                self.qubits
+                    .as_mut_slice()
+                    .par_chunks_exact_mut(block_size)
+                    .for_each(|block| {
+                        let (lo, hi) = block.split_at_mut(mask);
+                        for (x0, x1) in lo.iter_mut().zip(hi.iter_mut()) {
+                            *x0 *= d0;
+                            *x1 *= d1;
+                        }
+                    });
             }
         }
     }
