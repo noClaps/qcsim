@@ -61,7 +61,7 @@ Run details:
 
 - 10000 shots with the sampler
 - Python version 3.15.2
-- Rust version 1.100.0
+- Rust version 1.100.1
 - Dependency versions are listed in [`uv.lock`](./qiskit/uv.lock) and [`Cargo.lock`](./Cargo.lock).
 
 Benchmarking script: [`bench.py`](./bench.py)
@@ -71,15 +71,29 @@ Benchmarking script: [`bench.py`](./bench.py)
 - [QCSim](./examples/grover.rs)
 - [Qiskit](./qiskit/grover.py), uses Qiskit Aer `SamplerV2`
 
-|           | QCSim                | Qiskit                |
-| --------- | -------------------- | --------------------- |
-| 12 qubits | 31.2 ms (2.5 MiB)    | 426.8 ms (112.7 MiB)  |
-| 13 qubits | 53.8 ms (2.8 MiB)    | 715.8 ms (162.6 MiB)  |
-| 14 qubits | 93.9 ms (3.2 MiB)    | 1547.0 ms (299.1 MiB) |
-| 15 qubits | 164.6 ms (4.1 MiB)   | 3720.4 ms (674.1 MiB) |
-| 16 qubits | 339.4 ms (5.9 MiB)   | 10.1 s (1923.5 MiB)   |
-| 17 qubits | 640.2 ms (9.4 MiB)   | 28.3 s (4740.5 MiB)   |
-| 18 qubits | 1588.1 ms (16.4 MiB) | 81.6 s (5222.4 MiB)   |
+#### QCSim
+
+| Qubits | Time            | Memory         |
+| ------ | --------------- | -------------- |
+| 12     | 31.4 ± 0.5 ms   | 2.5 ± 0.0 MiB  |
+| 13     | 53.9 ± 0.5 ms   | 2.8 ± 0.0 MiB  |
+| 14     | 93.2 ± 0.6 ms   | 3.3 ± 0.0 MiB  |
+| 15     | 167.6 ± 2.1 ms  | 4.2 ± 0.0 MiB  |
+| 16     | 314.7 ± 4.4 ms  | 5.9 ± 0.0 MiB  |
+| 17     | 654.5 ± 9.8 ms  | 9.4 ± 0.0 MiB  |
+| 18     | 1587.8 ± 6.0 ms | 16.4 ± 0.0 MiB |
+
+#### Qiskit
+
+| Qubits | Time               | Memory             |
+| ------ | ------------------ | ------------------ |
+| 12     | 421.9 ± 5.3 ms     | 112.8 ± 0.1 MiB    |
+| 13     | 715.4 ± 3.6 ms     | 162.7 ± 0.1 MiB    |
+| 14     | 1537.4 ± 5.1 ms    | 299.1 ± 0.1 MiB    |
+| 15     | 3708.3 ± 20.8 ms   | 673.9 ± 0.1 MiB    |
+| 16     | 9938.9 ± 27.8 ms   | 1923.5 ± 0.2 MiB   |
+| 17     | 27753.3 ± 189.6 ms | 5207.0 ± 0.2 MiB   |
+| 18     | 81267.3 ± 509.4 ms | 5634.2 ± 139.0 MiB |
 
 > [!note]
 > Each additional qubit doubles the size of the state vector and diagonal matrices, and quadruples the size of dense matrices ($2^1 \times 2^1 = 4 \to 2^2 \times 2^2 = 16 \to 2^3 \times 2^3 = 64$).
@@ -89,9 +103,17 @@ Benchmarking script: [`bench.py`](./bench.py)
 - [QCSim](./examples/coin-flip.rs)
 - [Qiskit](./qiskit/coin-flip.py), uses Qiskit `StatevectorSampler`
 
-| QCSim            | Qiskit              |
-| ---------------- | ------------------- |
-| 1.8 ms (2.2 MiB) | 215.6 ms (76.0 MiB) |
+#### QCSim
+
+| Time         | Memory        |
+| ------------ | ------------- |
+| 1.9 ± 0.1 ms | 2.2 ± 0.0 MiB |
+
+#### Qiskit
+
+| Time           | Memory         |
+| -------------- | -------------- |
+| 215.4 ± 0.4 ms | 76.0 ± 0.1 MiB |
 
 ### Analysis
 

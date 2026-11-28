@@ -1,10 +1,11 @@
 import json
-import sys
+from argparse import ArgumentParser
 from pathlib import Path
 from subprocess import run
+from typing import Literal
 
 
-def cargo_build(name):
+def cargo_build(name: str):
     run(
         ["cargo", "build", "--release", "--example", name],
         check=True,
@@ -12,12 +13,16 @@ def cargo_build(name):
     )
 
 
-def hyperfine(name, warmup=10):
+def hyperfine(name: str, backend: Literal["qcsim", "qiskit"], warmup=10):
+    if backend == "qiskit":
+        prog = f"uv run qiskit/{name}.py"
+    else:
+        prog = f"./target/release/examples/{name}"
+
     data = run(
         [
             "hyperfine",
-            f"./target/release/examples/{name}",
-            f"uv run qiskit/{name}.py",
+            prog,
             f"--warmup={warmup}",
             "--export-json=-",
             "--style=none",
@@ -25,7 +30,7 @@ def hyperfine(name, warmup=10):
         check=True,
         capture_output=True,
     ).stdout
-    results = json.loads(data)["results"]
+    results = json.loads(data)["results"][0]
     return results
 
 
@@ -33,43 +38,65 @@ def print_heading(heading):
     print(f"\x1b[1;4m=== {heading} ===\x1b[0m")
 
 
-if "grover" in sys.argv or len(sys.argv) == 1:
-    print_heading("grover")
-    prev = 18
-    qcsim = Path("examples/grover.rs")
-    qiskit = Path("qiskit/grover.py")
+ap = ArgumentParser()
+ap.add_argument("-b", "--backend", default="qcsim", choices=["qcsim", "qiskit"])
+ap.add_argument(
+    "-p", "--program", default="both", choices=["grover", "coin-flip", "both"]
+)
+args = ap.parse_args()
 
-    print("|           | QCSim | Qiskit |")
-    print("| --------- | ----- | ------ |")
+if args.program == "grover" or args.program == "both":
+    prev = 18
+    if args.backend == "qiskit":
+        file = Path("qiskit/grover.py")
+    else:
+        file = Path("examples/grover.rs")
+
+    print_heading(f"grover ({args.backend})")
+    print("| Qubits | Time | Memory |")
+    print("| ------ | ---- | ------ |")
+
     for i in range(12, prev + 1):
-        qcsim.write_text(qcsim.read_text().replace(f"{prev}", f"{i}", 1))
-        qiskit.write_text(qiskit.read_text().replace(f"{prev}", f"{i}", 1))
+        file.write_text(file.read_text().replace(f"{prev}", f"{i}", 1))
         prev = i
 
         cargo_build("grover")
-        results = hyperfine("grover")
-        print(f"| {i} qubits |", end="")
-        for r in results:
-            summary = r["summary"]
-            mem, mem_unit = summary["memory_peak_resident"]["mean"] / 1024 / 1024, "MiB"
-            time, time_unit = summary["time_wall_clock"]["mean"], "s"
-            if time < 10:
-                time, time_unit = time * 1000, "ms"
-            print(f" {time:.1f} {time_unit} ({mem:.1f} {mem_unit}) |", end="")
-        print()
+        results = hyperfine("grover", args.backend)
+        summary = results["summary"]
+        mem_peak_res = summary["memory_peak_resident"]
+        time_wall_clock = summary["time_wall_clock"]
+        mem, mem_stddev, mem_unit = (
+            round(mem_peak_res["mean"] / 1024 / 1024, 1),
+            round(mem_peak_res["stddev"] / 1024 / 1024, 1),
+            "MiB",
+        )
+        time, time_stddev, time_unit = (
+            round(time_wall_clock["mean"] * 1000, 1),
+            round(time_wall_clock["stddev"] * 1000, 1),
+            "ms",
+        )
+        print(
+            f"| {i} | {time} ± {time_stddev} {time_unit} | {mem} ± {mem_stddev} {mem_unit} |"
+        )
 
-if "coin-flip" in sys.argv or len(sys.argv) == 1:
-    print_heading("coin-flip")
-    print("| QCSim | Qiskit |")
-    print("| ----- | ------ |")
-    print("|", end="")
+if args.program == "coin-flip" or args.program == "both":
     cargo_build("coin-flip")
-    results = hyperfine("coin-flip")
-    for r in results:
-        summary = r["summary"]
-        mem, mem_unit = summary["memory_peak_resident"]["mean"] / 1024 / 1024, "MiB"
-        time, time_unit = summary["time_wall_clock"]["mean"], "s"
-        if time < 10:
-            time, time_unit = time * 1000, "ms"
-        print(f" {time:.1f} {time_unit} ({mem:.1f} {mem_unit}) |", end="")
-    print()
+    results = hyperfine("coin-flip", args.backend)
+    summary = results["summary"]
+    mem_peak_res = summary["memory_peak_resident"]
+    time_wall_clock = summary["time_wall_clock"]
+    mem, mem_stddev, mem_unit = (
+        round(mem_peak_res["mean"] / 1024 / 1024, 1),
+        round(mem_peak_res["stddev"] / 1024 / 1024, 1),
+        "MiB",
+    )
+    time, time_stddev, time_unit = (
+        round(time_wall_clock["mean"] * 1000, 1),
+        round(time_wall_clock["stddev"] * 1000, 1),
+        "ms",
+    )
+
+    print_heading(f"coin-flip ({args.backend})")
+    print("| Time | Memory |")
+    print("| ---- | ------ |")
+    print(f"| {time} ± {time_stddev} {time_unit} | {mem} ± {mem_stddev} {mem_unit} |")
