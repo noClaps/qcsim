@@ -109,3 +109,5 @@ Parallelising some parts of the unitary gate application code nearly halved the 
 6.2 ms to 31.2 ms. This is likely due to the overhead of setting up threading, but I think that's a fair trade-off for the performance wins for larger circuits. Memory usage also rose slightly, going from 15.9 MiB to 16.4 MiB for the 18 qubit version and 2.1 MiB to 2.5 MiB for the 12 qubit version.
 
 For reference, the coin flip example's runtime rose from 1.6 ms to 1.8 ms with this change, and memory usage rose from 1.8 MiB to 2.2 MiB.
+
+Of course, the performance benefits are contingent on the machine on which the code is being run. Less powerful machines will see smaller performance improvements.
